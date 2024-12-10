@@ -327,8 +327,9 @@ class _DownloadAction extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     return _MenuItem(
-      title: _actionText(AppLocalizations.of(context)),
+      title: _actionText(l),
       icon: downloadAction.iconBuilder(context),
       onTap: downloadAction.action,
     );

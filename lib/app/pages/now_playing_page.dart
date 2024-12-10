@@ -215,6 +215,8 @@ class _Progress extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
     final colors = ref.watch(mediaItemThemeProvider).valueOrNull;
     final position = ref.watch(positionProvider);
     final duration = ref.watch(durationProvider);
@@ -246,7 +248,7 @@ class _Progress extends HookConsumerWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: DefaultTextStyle(
-            style: Theme.of(context).textTheme.titleMedium!,
+            style: theme.textTheme.titleMedium!,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
