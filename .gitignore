@@ -45,3 +45,8 @@ app.*.map.json
 *.sqlite*
 .fvm/
 *.keystore
+
+# Generated Riverpod and freezed files
+*.g.dart
+*.gr.dart
+*.freezed.dart
