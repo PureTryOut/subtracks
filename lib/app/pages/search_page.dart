@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -14,7 +13,6 @@ import '../../models/support.dart';
 import '../../services/audio_service.dart';
 import '../../state/music.dart';
 import '../../state/settings.dart';
-import '../app_router.dart';
 import '../items.dart';
 import 'songs_page.dart';
 
@@ -54,9 +52,15 @@ FutureOr<SearchResults> searchResult(Ref ref) async {
   );
 }
 
-@RoutePage()
 class SearchPage extends HookConsumerWidget {
-  const SearchPage({super.key});
+  const SearchPage({
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
+    super.key,
+  });
+
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,11 +75,22 @@ class SearchPage extends HookConsumerWidget {
             slivers: [
               const SliverToBoxAdapter(child: _SearchBar()),
               if (results != null && results.songs.isNotEmpty)
-                _SongsSection(songs: results.songs),
+                _SongsSection(
+                  songs: results.songs,
+                  onAlbumPressed: onAlbumPressed,
+                  onArtistPressed: onArtistPressed,
+                ),
               if (results != null && results.albums.isNotEmpty)
-                _AlbumsSection(albums: results.albums),
+                _AlbumsSection(
+                  albums: results.albums,
+                  onAlbumPressed: onAlbumPressed,
+                  onArtistPressed: onArtistPressed,
+                ),
               if (results != null && results.artists.isNotEmpty)
-                _ArtistsSection(artists: results.artists),
+                _ArtistsSection(
+                  artists: results.artists,
+                  onArtistPressed: onArtistPressed,
+                ),
               if (results != null)
                 const SliverPadding(padding: EdgeInsets.only(top: 96)),
             ],
@@ -94,7 +109,7 @@ class _SearchBar extends HookConsumerWidget {
     final controller = useTextEditingController(text: '');
 
     final theme = Theme.of(context);
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Container(
       color: ElevationOverlay.applySurfaceTint(
@@ -113,7 +128,7 @@ class _SearchBar extends HookConsumerWidget {
           child: TextFormField(
             controller: controller,
             decoration: InputDecoration(
-              hintText: l.searchInputPlaceholder,
+              hintText: localizations.searchInputPlaceholder,
             ),
             onChanged: (value) {
               ref.read(searchQueryProvider.notifier).setQuery(value);
@@ -164,15 +179,21 @@ class _Section extends HookConsumerWidget {
 
 class _SongsSection extends HookConsumerWidget {
   final IList<Song>? songs;
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
 
-  const _SongsSection({required this.songs});
+  const _SongsSection({
+    required this.songs,
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return _Section(
-      title: l.resourcesSongName(100),
+      title: localizations.resourcesSongName(100),
       children: (songs ?? <Song>[]).map(
         (song) => QueueContext(
           type: QueueContextType.album,
@@ -181,9 +202,7 @@ class _SongsSection extends HookConsumerWidget {
             song: song,
             image: true,
             onTap: () async {
-              const query = ListQuery(
-                sort: SortBy(column: 'disc, track'),
-              );
+              const query = ListQuery(sort: SortBy(column: 'disc, track'));
               final albumSongs = await ref.read(
                 albumSongsListProvider(song.albumId!, query).future,
               );
@@ -199,6 +218,8 @@ class _SongsSection extends HookConsumerWidget {
                     ),
                   );
             },
+            onAlbumPressed: onAlbumPressed,
+            onArtistPressed: onArtistPressed,
           ),
         ),
       ),
@@ -208,19 +229,26 @@ class _SongsSection extends HookConsumerWidget {
 
 class _AlbumsSection extends HookConsumerWidget {
   final IList<Album>? albums;
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
 
-  const _AlbumsSection({required this.albums});
+  const _AlbumsSection({
+    required this.albums,
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return _Section(
-      title: l.resourcesAlbumName(100),
+      title: localizations.resourcesAlbumName(100),
       children: (albums ?? <Album>[]).map(
         (album) => AlbumListTile(
           album: album,
-          onTap: () => context.navigateTo(AlbumSongsRoute(id: album.id)),
+          onTap: () => onAlbumPressed(album.id),
+          onArtistPressed: onArtistPressed,
         ),
       ),
     );
@@ -229,19 +257,23 @@ class _AlbumsSection extends HookConsumerWidget {
 
 class _ArtistsSection extends HookConsumerWidget {
   final IList<Artist>? artists;
+  final void Function(String artistId) onArtistPressed;
 
-  const _ArtistsSection({required this.artists});
+  const _ArtistsSection({
+    required this.artists,
+    required this.onArtistPressed,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return _Section(
-      title: l.resourcesArtistName(100),
+      title: localizations.resourcesArtistName(100),
       children: (artists ?? <Artist>[]).map(
         (artist) => ArtistListTile(
           artist: artist,
-          onTap: () => context.navigateTo(ArtistRoute(id: artist.id)),
+          onTap: () => onArtistPressed(artist.id),
         ),
       ),
     );

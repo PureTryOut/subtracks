@@ -16,21 +16,21 @@ class DeleteDialog extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(baseThemeProvider);
 
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Theme(
       data: theme.theme,
       child: AlertDialog(
-        title: Text(l.resourcesSongListDeleteAllTitle),
-        content: Text(l.resourcesSongListDeleteAllContent),
+        title: Text(localizations.resourcesSongListDeleteAllTitle),
+        content: Text(localizations.resourcesSongListDeleteAllContent),
         actions: [
           FilledButton.tonal(
             onPressed: () => Navigator.pop(context, false),
-            child: Text(l.actionsCancel),
+            child: Text(localizations.actionsCancel),
           ),
           FilledButton.icon(
             onPressed: () => Navigator.pop(context, true),
-            label: Text(l.actionsDelete),
+            label: Text(localizations.actionsDelete),
             icon: const Icon(Icons.delete_forever_rounded),
           ),
         ],
@@ -53,7 +53,7 @@ class MultipleChoiceDialog<T> extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     final state = useState<T>(current);
 
     List<Widget> choices = [];
@@ -85,11 +85,11 @@ class MultipleChoiceDialog<T> extends HookConsumerWidget {
       actions: [
         FilledButton.tonal(
           onPressed: () => Navigator.pop(context, null),
-          child: Text(l.actionsCancel),
+          child: Text(localizations.actionsCancel),
         ),
         FilledButton.icon(
           onPressed: () => Navigator.pop(context, state.value),
-          label: Text(l.actionsOk),
+          label: Text(localizations.actionsOk),
           icon: const Icon(Icons.check_rounded),
         ),
       ],

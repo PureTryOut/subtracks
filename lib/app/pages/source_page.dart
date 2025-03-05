@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
@@ -14,13 +13,12 @@ import '../../services/settings_service.dart';
 import '../items.dart';
 import '../snackbars.dart';
 
-@RoutePage()
 class SourcePage extends HookConsumerWidget {
   final int? id;
 
   const SourcePage({
     super.key,
-    @pathParam this.id,
+    this.id,
   });
 
   @override
@@ -33,17 +31,17 @@ class SourcePage extends HookConsumerWidget {
     );
     final form = useState(GlobalKey<FormState>()).value;
     final theme = Theme.of(context);
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     final isSaving = useState(false);
     final isDeleting = useState(false);
 
     final name = LabeledTextField(
-      label: l.settingsServersFieldsName,
+      label: localizations.settingsServersFieldsName,
       initialValue: source?.name,
       required: true,
     );
     final address = LabeledTextField(
-      label: l.settingsServersFieldsAddress,
+      label: localizations.settingsServersFieldsAddress,
       initialValue: source?.address.toString(),
       keyboardType: TextInputType.url,
       autofillHints: const [AutofillHints.url],
@@ -56,13 +54,13 @@ class SourcePage extends HookConsumerWidget {
       },
     );
     final username = LabeledTextField(
-      label: l.settingsServersFieldsUsername,
+      label: localizations.settingsServersFieldsUsername,
       initialValue: source?.username,
       autofillHints: const [AutofillHints.username],
       required: true,
     );
     final password = LabeledTextField(
-      label: l.settingsServersFieldsPassword,
+      label: localizations.settingsServersFieldsPassword,
       initialValue: source?.password,
       obscureText: true,
       autofillHints: const [AutofillHints.password],
@@ -72,10 +70,17 @@ class SourcePage extends HookConsumerWidget {
     final forcePlaintextPassword = useState(!(source?.useTokenAuth ?? true));
     final forcePlaintextSwitch = SwitchListTile(
       value: forcePlaintextPassword.value,
-      title: Text(l.settingsServersOptionsForcePlaintextPasswordTitle),
+      title:
+          Text(localizations.settingsServersOptionsForcePlaintextPasswordTitle),
       subtitle: forcePlaintextPassword.value
-          ? Text(l.settingsServersOptionsForcePlaintextPasswordDescriptionOn)
-          : Text(l.settingsServersOptionsForcePlaintextPasswordDescriptionOff),
+          ? Text(
+              localizations
+                  .settingsServersOptionsForcePlaintextPasswordDescriptionOn,
+            )
+          : Text(
+              localizations
+                  .settingsServersOptionsForcePlaintextPasswordDescriptionOff,
+            ),
       onChanged: (value) => forcePlaintextPassword.value = value,
     );
 
@@ -92,8 +97,6 @@ class SourcePage extends HookConsumerWidget {
                 foregroundColor: theme.colorScheme.onTertiaryContainer,
                 onPressed: !isSaving.value && !isDeleting.value
                     ? () async {
-                        final router = context.router;
-
                         try {
                           isDeleting.value = true;
                           await ref
@@ -102,8 +105,6 @@ class SourcePage extends HookConsumerWidget {
                         } finally {
                           isDeleting.value = false;
                         }
-
-                        router.pop();
                       }
                     : null,
                 child: isDeleting.value
@@ -126,15 +127,13 @@ class SourcePage extends HookConsumerWidget {
                       child: CircularProgressIndicator(),
                     )
                   : const Icon(Icons.save_rounded),
-              label: Text(l.settingsServersActionsSave),
+              label: Text(localizations.settingsServersActionsSave),
               onPressed: !isSaving.value && !isDeleting.value
                   ? () async {
-                      final router = context.router;
                       if (!form.currentState!.validate()) {
                         return;
                       }
 
-                      var error = false;
                       try {
                         isSaving.value = true;
                         if (source != null) {
@@ -170,13 +169,8 @@ class SourcePage extends HookConsumerWidget {
                         if (!context.mounted) return;
                         showErrorSnackbar(context, e.toString());
                         log.severe('Saving source', e, st);
-                        error = true;
                       } finally {
                         isSaving.value = false;
-                      }
-
-                      if (!error) {
-                        router.pop();
                       }
                     }
                   : null,
@@ -193,8 +187,8 @@ class SourcePage extends HookConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     source == null
-                        ? l.settingsServersActionsAdd
-                        : l.settingsServersActionsEdit,
+                        ? localizations.settingsServersActionsAdd
+                        : localizations.settingsServersActionsEdit,
                     style: theme.textTheme.displaySmall,
                   ),
                 ),

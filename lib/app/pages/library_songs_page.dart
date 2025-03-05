@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -14,9 +13,17 @@ import '../lists.dart';
 import 'library_page.dart';
 import 'songs_page.dart';
 
-@RoutePage()
 class LibrarySongsPage extends HookConsumerWidget {
-  const LibrarySongsPage({super.key});
+  const LibrarySongsPage({
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
+    required this.onAlbumsPressed,
+    super.key,
+  });
+
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
+  final VoidCallback onAlbumsPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -66,6 +73,8 @@ class LibrarySongsPage extends HookConsumerWidget {
           song: item,
           image: true,
           onTap: () => play(index: index),
+          onAlbumPressed: onAlbumPressed,
+          onArtistPressed: onArtistPressed,
         ),
       ),
     );

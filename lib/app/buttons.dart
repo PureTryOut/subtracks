@@ -11,12 +11,12 @@ class ShuffleFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return FloatingActionButton(
       heroTag: null,
       onPressed: onPressed,
-      tooltip: l.actionsCancel,
+      tooltip: localizations.actionsCancel,
       child: const Icon(Icons.shuffle_rounded),
     );
   }

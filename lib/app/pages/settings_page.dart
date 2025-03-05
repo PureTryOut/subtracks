@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:auto_route/auto_route.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:share_plus/share_plus.dart';
-import 'package:subtracks/app/app_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../log.dart';
@@ -20,48 +18,28 @@ import '../dialogs.dart';
 
 const kHorizontalPadding = 16.0;
 
-@RoutePage()
 class SettingsPage extends HookConsumerWidget {
-  const SettingsPage({super.key});
+  const SettingsPage({
+    required this.onSourcePressed,
+    super.key,
+  });
+
+  final void Function([int sourceId]) onSourcePressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
-    // final downloads = ref.watch(downloadServiceProvider.select(
-    //   (value) => value.downloads,
-    // ));
+    final localizations = AppLocalizations.of(context);
 
     return Scaffold(
       body: ListView(
         children: [
           const SizedBox(height: 96),
-          _SectionHeader(l.settingsServersName),
-          const _Sources(),
-          _SectionHeader(l.settingsNetworkName),
+          _SectionHeader(localizations.settingsServersName),
+          _Sources(onSourcePressed: onSourcePressed),
+          _SectionHeader(localizations.settingsNetworkName),
           const _Network(),
-          _SectionHeader(l.settingsAboutName),
+          _SectionHeader(localizations.settingsAboutName),
           _About(),
-          // const _SectionHeader('Downloads'),
-          // _Section(
-          //   children: downloads
-          //       .map(
-          //         (e) => ListTile(
-          //           isThreeLine: true,
-          //           title: Text(e.filename ?? e.url),
-          //           subtitle: Column(
-          //             mainAxisAlignment: MainAxisAlignment.start,
-          //             children: [
-          //               Row(children: [Text('Progress: ${e.progress}%')]),
-          //               Row(children: [Text('Status: ${e.status})')]),
-          //               Text('Status: ${e.savedDir}'),
-          //             ],
-          //           ),
-          //           trailing:
-          //               CircularProgressIndicator(value: e.progress / 100),
-          //         ),
-          //       )
-          //       .toList(),
-          // ),
         ],
       ),
     );
@@ -136,22 +114,22 @@ class _About extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     final pkg = ref.watch(packageInfoProvider).requireValue;
 
     return _Section(
       children: [
         ListTile(
           title: const Text('subtracks'),
-          subtitle: Text(l.settingsAboutVersion(pkg.version)),
+          subtitle: Text(localizations.settingsAboutVersion(pkg.version)),
         ),
         ListTile(
-          title: Text(l.settingsAboutActionsLicenses),
+          title: Text(localizations.settingsAboutActionsLicenses),
           // trailing: const Icon(Icons.open_in_new_rounded),
           onTap: () {},
         ),
         ListTile(
-          title: Text(l.settingsAboutActionsProjectHomepage),
+          title: Text(localizations.settingsAboutActionsProjectHomepage),
           subtitle: Text(_homepage.toString()),
           trailing: const Icon(Icons.open_in_new_rounded),
           onTap: () => launchUrl(
@@ -160,7 +138,7 @@ class _About extends HookConsumerWidget {
           ),
         ),
         ListTile(
-          title: Text(l.settingsAboutActionsSupport),
+          title: Text(localizations.settingsAboutActionsSupport),
           subtitle: Text(_donate.toString()),
           trailing: const Icon(Icons.open_in_new_rounded),
           onTap: () => launchUrl(
@@ -180,14 +158,14 @@ class _ShareLogsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         OutlinedButton.icon(
           icon: const Icon(Icons.share),
-          label: Text(l.settingsAboutShareLogs),
+          label: Text(localizations.settingsAboutShareLogs),
           onPressed: () async {
             final files = await logFiles();
             if (files.isEmpty) return;
@@ -196,7 +174,7 @@ class _ShareLogsButton extends StatelessWidget {
             final value = await showDialog<String>(
               context: context,
               builder: (context) => MultipleChoiceDialog<String>(
-                title: l.settingsAboutChooseLog,
+                title: localizations.settingsAboutChooseLog,
                 current: files.first.path,
                 options: files
                     .map(
@@ -233,10 +211,10 @@ class _MaxBitrateWifi extends HookConsumerWidget {
         (value) => value.app.maxBitrateWifi,
       ),
     );
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return _MaxBitrateOption(
-      title: l.settingsNetworkOptionsMaxBitrateWifiTitle,
+      title: localizations.settingsNetworkOptionsMaxBitrateWifiTitle,
       bitrate: bitrate,
       onChange: (value) {
         ref.read(settingsServiceProvider.notifier).setMaxBitrateWifi(value);
@@ -255,10 +233,10 @@ class _MaxBitrateMobile extends HookConsumerWidget {
         (value) => value.app.maxBitrateMobile,
       ),
     );
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return _MaxBitrateOption(
-      title: l.settingsNetworkOptionsMaxBitrateMobileTitle,
+      title: localizations.settingsNetworkOptionsMaxBitrateMobileTitle,
       bitrate: bitrate,
       onChange: (value) {
         ref.read(settingsServiceProvider.notifier).setMaxBitrateMobile(value);
@@ -288,11 +266,11 @@ class _MaxBitrateOption extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return ListTile(
       title: Text(title),
-      subtitle: Text(_bitrateText(l, bitrate)),
+      subtitle: Text(_bitrateText(localizations, bitrate)),
       onTap: () async {
         final value = await showDialog<int>(
           context: context,
@@ -302,7 +280,7 @@ class _MaxBitrateOption extends HookConsumerWidget {
             options: options
                 .map(
                   (opt) => MultiChoiceOption.int(
-                    title: _bitrateText(l, opt),
+                    title: _bitrateText(localizations, opt),
                     option: opt,
                   ),
                 )
@@ -328,24 +306,26 @@ class _StreamFormat extends HookConsumerWidget {
     final streamFormat = ref.watch(
       settingsServiceProvider.select((value) => value.app.streamFormat),
     );
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return ListTile(
-      title: Text(l.settingsNetworkOptionsStreamFormat),
+      title: Text(localizations.settingsNetworkOptionsStreamFormat),
       subtitle: Text(
-        streamFormat ?? l.settingsNetworkOptionsStreamFormatServerDefault,
+        streamFormat ??
+            localizations.settingsNetworkOptionsStreamFormatServerDefault,
       ),
       onTap: () async {
         final value = await showDialog<String>(
           context: context,
           builder: (context) => MultipleChoiceDialog<String>(
-            title: l.settingsNetworkOptionsStreamFormat,
+            title: localizations.settingsNetworkOptionsStreamFormat,
             current: streamFormat ?? '',
             options: options
                 .map(
                   (opt) => MultiChoiceOption.string(
                     title: opt == ''
-                        ? l.settingsNetworkOptionsStreamFormatServerDefault
+                        ? localizations
+                            .settingsNetworkOptionsStreamFormatServerDefault
                         : opt,
                     option: opt,
                   ),
@@ -370,14 +350,14 @@ class _OfflineMode extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final offline = ref.watch(offlineModeProvider);
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return SwitchListTile(
       value: offline,
-      title: Text(l.settingsNetworkOptionsOfflineMode),
+      title: Text(localizations.settingsNetworkOptionsOfflineMode),
       subtitle: offline
-          ? Text(l.settingsNetworkOptionsOfflineModeOn)
-          : Text(l.settingsNetworkOptionsOfflineModeOff),
+          ? Text(localizations.settingsNetworkOptionsOfflineModeOn)
+          : Text(localizations.settingsNetworkOptionsOfflineModeOff),
       onChanged: (value) {
         ref.read(offlineModeProvider.notifier).setMode(value);
       },
@@ -386,7 +366,9 @@ class _OfflineMode extends HookConsumerWidget {
 }
 
 class _Sources extends HookConsumerWidget {
-  const _Sources();
+  const _Sources({required this.onSourcePressed});
+
+  final void Function([int sourceId]) onSourcePressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -401,7 +383,7 @@ class _Sources extends HookConsumerWidget {
       ),
     );
 
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return _Section(
       children: [
@@ -423,9 +405,7 @@ class _Sources extends HookConsumerWidget {
             ),
             secondary: IconButton(
               icon: const Icon(Icons.edit_rounded),
-              onPressed: () {
-                context.pushRoute(SourceRoute(id: source.id));
-              },
+              onPressed: () => onSourcePressed(source.id),
             ),
           ),
         const SizedBox(height: 8),
@@ -434,10 +414,8 @@ class _Sources extends HookConsumerWidget {
           children: [
             OutlinedButton.icon(
               icon: const Icon(Icons.add_rounded),
-              label: Text(l.settingsServersActionsAdd),
-              onPressed: () {
-                context.pushRoute(SourceRoute());
-              },
+              label: Text(localizations.settingsServersActionsAdd),
+              onPressed: () => onSourcePressed(),
             ),
           ],
         ),

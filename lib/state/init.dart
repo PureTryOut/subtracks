@@ -7,8 +7,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../app/app_router.dart';
-import '../app/pages/bottom_nav_page.dart';
 import '../app/pages/library_page.dart';
 import '../services/audio_service.dart';
 import '../services/download_service.dart';
@@ -22,11 +20,6 @@ part 'init.g.dart';
 FutureOr<Map<String, String>> env(Ref ref) async {
   await dotenv.load();
   return dotenv.env;
-}
-
-@Riverpod(keepAlive: true)
-AppRouter router(Ref ref) {
-  return AppRouter();
 }
 
 @Riverpod(keepAlive: true)
@@ -58,7 +51,6 @@ FutureOr<PackageInfo> packageInfo(Ref ref) async {
 
 @Riverpod(keepAlive: true)
 FutureOr<void> init(Ref ref) async {
-  ref.watch(routerProvider);
   await ref.watch(envProvider.future);
   await ref.read(packageInfoProvider.future);
   await ref.watch(placeholderImageUriProvider.future);
@@ -74,7 +66,6 @@ FutureOr<void> init(Ref ref) async {
 
   await ref.watch(downloadServiceProvider.notifier).init();
 
-  ref.watch(lastBottomNavStateServiceProvider.notifier);
   ref.watch(lastLibraryStateServiceProvider.notifier);
 
   await ref.watch(libraryListsProvider.notifier).init();

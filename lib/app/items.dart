@@ -29,9 +29,12 @@ class AlbumCard extends HookConsumerWidget {
   final CardStyle style;
   final AlbumSubtitle subtitle;
 
+  final void Function(String artistId) onArtistPressed;
+
   const AlbumCard({
     super.key,
     required this.album,
+    required this.onArtistPressed,
     this.onTap,
     this.style = CardStyle.withText,
     this.subtitle = AlbumSubtitle.artist,
@@ -64,7 +67,10 @@ class AlbumCard extends HookConsumerWidget {
           context: context,
           ref: ref,
           builder: (context) => BottomSheetMenu(
-            child: AlbumContextMenu(album: album),
+            child: AlbumContextMenu(
+              album: album,
+              onArtistPressed: onArtistPressed,
+            ),
           ),
         );
       },
@@ -163,9 +169,12 @@ class AlbumListTile extends HookConsumerWidget {
   final Album album;
   final void Function()? onTap;
 
+  final void Function(String artistId) onArtistPressed;
+
   const AlbumListTile({
     super.key,
     required this.album,
+    required this.onArtistPressed,
     this.onTap,
   });
 
@@ -184,7 +193,10 @@ class AlbumListTile extends HookConsumerWidget {
           ref: ref,
           builder: (context) => BottomSheetMenu(
             size: MenuSize.small,
-            child: AlbumContextMenu(album: album),
+            child: AlbumContextMenu(
+              album: album,
+              onArtistPressed: onArtistPressed,
+            ),
           ),
         );
       },
@@ -204,7 +216,7 @@ class ArtistListTile extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return ListTile(
       leading: CircleClip(
@@ -212,7 +224,7 @@ class ArtistListTile extends HookConsumerWidget {
       ),
       title: Text(artist.name),
       subtitle: Text(
-        l.resourcesAlbumCount(
+        localizations.resourcesAlbumCount(
           artist.albumCount,
         ),
       ),
@@ -243,7 +255,7 @@ class PlaylistListTile extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     // generate the palette used in other views ahead of time
     ref.watch(playlistArtPaletteProvider(playlist.id));
@@ -255,7 +267,7 @@ class PlaylistListTile extends HookConsumerWidget {
       ),
       title: Text(playlist.name),
       subtitle: Text(
-        l.resourcesSongCount(
+        localizations.resourcesSongCount(
           playlist.songCount,
         ),
       ),
@@ -279,9 +291,14 @@ class SongListTile extends HookConsumerWidget {
   final void Function()? onTap;
   final bool image;
 
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
+
   const SongListTile({
     super.key,
     required this.song,
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
     this.onTap,
     this.image = false,
   });
@@ -307,7 +324,11 @@ class SongListTile extends HookConsumerWidget {
             context: context,
             ref: ref,
             builder: (context) => BottomSheetMenu(
-              child: SongContextMenu(song: song),
+              child: SongContextMenu(
+                song: song,
+                onAlbumPressed: onAlbumPressed,
+                onArtistPressed: onArtistPressed,
+              ),
             ),
           );
         },

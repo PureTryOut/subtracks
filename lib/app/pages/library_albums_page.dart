@@ -1,17 +1,21 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../database/database.dart';
 import '../../state/settings.dart';
-import '../app_router.dart';
 import '../hooks/use_list_query_paging_controller.dart';
 import '../items.dart';
 import '../lists.dart';
 
-@RoutePage()
 class LibraryAlbumsPage extends HookConsumerWidget {
-  const LibraryAlbumsPage({super.key});
+  const LibraryAlbumsPage({
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
+    super.key,
+  });
+
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,7 +39,8 @@ class LibraryAlbumsPage extends HookConsumerWidget {
         album: item,
         style:
             size == GridSize.small ? CardStyle.imageOnly : CardStyle.withText,
-        onTap: () => context.navigateTo(AlbumSongsRoute(id: item.id)),
+        onTap: () => onAlbumPressed(item.id),
+        onArtistPressed: onArtistPressed,
       ),
     );
   }

@@ -1,5 +1,4 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -8,14 +7,16 @@ import '../models/support.dart';
 import '../services/audio_service.dart';
 import '../state/audio.dart';
 import '../state/theme.dart';
-import 'app_router.dart';
 import 'images.dart';
 import 'pages/now_playing_page.dart';
 
 class NowPlayingBar extends HookConsumerWidget {
   const NowPlayingBar({
+    required this.onPressed,
     super.key,
   });
+
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,9 +24,7 @@ class NowPlayingBar extends HookConsumerWidget {
     final noItem = ref.watch(mediaItemProvider).valueOrNull == null;
 
     final widget = GestureDetector(
-      onTap: () {
-        context.navigateTo(const NowPlayingRoute());
-      },
+      onTap: onPressed,
       child: Material(
         elevation: 3,
         color: colors?.darkBackground,

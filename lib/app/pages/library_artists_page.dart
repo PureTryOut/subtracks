@@ -1,7 +1,5 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:subtracks/app/app_router.dart';
 
 import '../../database/database.dart';
 import '../../state/settings.dart';
@@ -9,9 +7,13 @@ import '../hooks/use_list_query_paging_controller.dart';
 import '../items.dart';
 import '../lists.dart';
 
-@RoutePage()
 class LibraryArtistsPage extends HookConsumerWidget {
-  const LibraryArtistsPage({super.key});
+  const LibraryArtistsPage({
+    super.key,
+    required this.onArtistPressed,
+  });
+
+  final void Function(String artistId) onArtistPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,7 +35,7 @@ class LibraryArtistsPage extends HookConsumerWidget {
       refreshSyncAll: true,
       itemBuilder: (context, item, index) => ArtistListTile(
         artist: item,
-        onTap: () => context.navigateTo(ArtistRoute(id: item.id)),
+        onTap: () => onArtistPressed(item.id),
       ),
     );
   }
