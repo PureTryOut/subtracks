@@ -384,8 +384,7 @@ class AudioControl extends BaseAudioHandler with QueueHandler, SeekHandler {
       throw StateError('Could not get queue slice!');
     }
 
-    final list =
-        [slice.prev, slice.current, slice.next].whereNotNull().toList();
+    final list = [slice.prev, slice.current, slice.next].nonNulls.toList();
 
     mediaItem.add(slice.current!.mediaItem);
     queue.add(list.map((e) => e.mediaItem).toList());
@@ -405,7 +404,7 @@ class AudioControl extends BaseAudioHandler with QueueHandler, SeekHandler {
     queue.add(
       [slice.prev, slice.current, slice.next]
           .map((e) => e?.mediaItem)
-          .whereNotNull()
+          .nonNulls
           .toList(),
     );
 
@@ -572,7 +571,7 @@ class AudioControl extends BaseAudioHandler with QueueHandler, SeekHandler {
         await _db.songsInIds(_sourceId, slice.map((e) => e.id).toList()).get();
     final songMap = {for (var song in songs) song.id: song};
 
-    final albumIds = songs.map((e) => e.albumId).whereNotNull().toSet();
+    final albumIds = songs.map((e) => e.albumId).nonNulls.toSet();
     final albums = await _db.albumsInIds(_sourceId, albumIds.toList()).get();
     final albumArtMap = {
       for (var album in albums) album.id: _mapArtCache(album)

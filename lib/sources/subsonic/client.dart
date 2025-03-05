@@ -108,8 +108,6 @@ class SubsonicClient {
           {'query': '""', 'songCount': '1'},
         );
         return res.xml.findAllElements('song').isNotEmpty;
-      default:
-        return false;
     }
   }
 

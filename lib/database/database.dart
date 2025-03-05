@@ -182,11 +182,10 @@ class SubtracksDatabase extends _$SubtracksDatabase {
                 ..where(artists.sourceId.equals(sourceId)))
               .map((row) => row.read(artists.id))
               .get())
-          .whereNotNull()
+          .nonNulls
           .toSet();
-      final downloadIds = (await artistIdsWithDownloadStatus(sourceId).get())
-          .whereNotNull()
-          .toSet();
+      final downloadIds =
+          (await artistIdsWithDownloadStatus(sourceId).get()).nonNulls.toSet();
 
       final diff = allIds.difference(downloadIds).difference(ids);
       for (var slice in diff.slices(kSqliteMaxVariableNumber)) {
@@ -211,11 +210,10 @@ class SubtracksDatabase extends _$SubtracksDatabase {
                 ..where(albums.sourceId.equals(sourceId)))
               .map((row) => row.read(albums.id))
               .get())
-          .whereNotNull()
+          .nonNulls
           .toSet();
-      final downloadIds = (await albumIdsWithDownloadStatus(sourceId).get())
-          .whereNotNull()
-          .toSet();
+      final downloadIds =
+          (await albumIdsWithDownloadStatus(sourceId).get()).nonNulls.toSet();
 
       final diff = allIds.difference(downloadIds).difference(ids);
       for (var slice in diff.slices(kSqliteMaxVariableNumber)) {
@@ -255,10 +253,10 @@ class SubtracksDatabase extends _$SubtracksDatabase {
                 ..where(playlists.sourceId.equals(sourceId)))
               .map((row) => row.read(playlists.id))
               .get())
-          .whereNotNull()
+          .nonNulls
           .toSet();
       final downloadIds = (await playlistIdsWithDownloadStatus(sourceId).get())
-          .whereNotNull()
+          .nonNulls
           .toSet();
 
       final diff = allIds.difference(downloadIds).difference(ids);
@@ -307,7 +305,7 @@ class SubtracksDatabase extends _$SubtracksDatabase {
                 ))
               .map((row) => row.read(songs.id))
               .get())
-          .whereNotNull()
+          .nonNulls
           .toSet();
 
       final diff = allIds.difference(ids);

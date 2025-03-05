@@ -192,7 +192,7 @@ class _BottomNavBar extends HookConsumerWidget {
                 return SvgPicture.asset(
                   'assets/tag_FILL0_wght400_GRAD0_opsz24.svg',
                   colorFilter: ColorFilter.mode(
-                    iconTheme.color!.withOpacity(iconTheme.opacity ?? 1),
+                    iconTheme.color!.withValues(alpha: iconTheme.opacity ?? 1),
                     BlendMode.srcIn,
                   ),
                   height: 28,

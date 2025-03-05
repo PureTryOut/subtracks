@@ -136,10 +136,10 @@ class DownloadService extends _$DownloadService {
       final songs = await _playlistSongs(playlist, SongDownloadState.none);
       if (_isCanceled(playlist)) return;
 
-      final albumIds = songs.map((e) => e.albumId).whereNotNull().toSet();
+      final albumIds = songs.map((e) => e.albumId).nonNulls.toSet();
       final albums =
           await ref.read(albumsInIdsProvider(albumIds.toIList()).future);
-      final artistIds = albums.map((e) => e.artistId).whereNotNull().toSet();
+      final artistIds = albums.map((e) => e.artistId).nonNulls.toSet();
 
       final cache = ref.read(cacheServiceProvider);
       await Future.wait([
