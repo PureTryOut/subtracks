@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
@@ -6,38 +5,26 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:subtracks/app/pages/library_albums_page.dart';
+import 'package:subtracks/app/pages/library_artists_page.dart';
+import 'package:subtracks/app/pages/library_playlists_page.dart';
+import 'package:subtracks/app/pages/library_songs_page.dart';
 
 import '../../database/database.dart';
 import '../../models/query.dart';
-import '../app_router.dart';
 import '../context_menus.dart';
 
 part 'library_page.g.dart';
-
-@Riverpod(keepAlive: true)
-TabObserver libraryTabObserver(Ref ref) {
-  return TabObserver();
-}
-
-@Riverpod(keepAlive: true)
-Stream<String> libraryTabPath(Ref ref) async* {
-  final observer = ref.watch(libraryTabObserverProvider);
-  await for (var tab in observer.path) {
-    yield tab;
-  }
-}
 
 @Riverpod(keepAlive: true)
 class LastLibraryStateService extends _$LastLibraryStateService {
   @override
   Future<void> build() async {
     final db = ref.watch(databaseProvider);
-    final tab = await ref.watch(libraryTabPathProvider.future);
 
     await db.saveLastLibraryState(
       LastLibraryStateData(
         id: 1,
-        tab: tab,
         albumsList: ref.watch(libraryListQueryProvider(0)).query,
         artistsList: ref.watch(libraryListQueryProvider(1)).query,
         playlistsList: ref.watch(libraryListQueryProvider(2)).query,
@@ -200,43 +187,57 @@ LibraryListQuery libraryListQuery(Ref ref, int index) {
   return ref.watch(libraryListsProvider.select((value) => value[index]));
 }
 
-@RoutePage()
 class LibraryTabsPage extends HookConsumerWidget {
-  const LibraryTabsPage({super.key});
+  const LibraryTabsPage({
+    required this.onPlaylistPressed,
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
+    required this.onAlbumsPressed,
+    super.key,
+  });
+
+  final void Function(String playlistId) onPlaylistPressed;
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
+  final VoidCallback onAlbumsPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final observer = ref.watch(libraryTabObserverProvider);
+    var pages = [
+      LibraryAlbumsPage(
+        onAlbumPressed: onAlbumPressed,
+        onArtistPressed: onArtistPressed,
+      ),
+      LibraryArtistsPage(onArtistPressed: onArtistPressed),
+      LibraryPlaylistsPage(onPlaylistPressed: onPlaylistPressed),
+      LibrarySongsPage(
+        onAlbumPressed: onAlbumPressed,
+        onArtistPressed: onArtistPressed,
+        onAlbumsPressed: onAlbumsPressed,
+      ),
+    ];
 
-    return AutoTabsRouter.tabBar(
-      inheritNavigatorObservers: false,
-      navigatorObservers: () => [observer],
-      routes: const [
-        LibraryAlbumsRoute(),
-        LibraryArtistsRoute(),
-        LibraryPlaylistsRoute(),
-        LibrarySongsRoute(),
-      ],
-      builder: (context, child, tabController) {
-        return Scaffold(
-          body: child,
-          floatingActionButton: const _LibraryFilterFab(),
-        );
-      },
+    var controller = useTabController(
+      initialLength: pages.length,
+      initialIndex: 0,
+    );
+
+    return Scaffold(
+      body: PageView(children: pages),
+      floatingActionButton: _LibraryFilterFab(activeIndex: controller.index),
     );
   }
 }
 
 class _LibraryFilterFab extends HookConsumerWidget {
-  const _LibraryFilterFab();
+  const _LibraryFilterFab({required this.activeIndex});
+
+  final int activeIndex;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    final tabsRouter = AutoTabsRouter.of(context);
-    final activeIndex =
-        useListenableSelector(tabsRouter, () => tabsRouter.activeIndex);
     final tabHasFilters = ref.watch(
       libraryListQueryProvider(activeIndex)
           .select((value) => value.query.filters.isNotEmpty),
@@ -267,17 +268,13 @@ class _LibraryFilterFab extends HookConsumerWidget {
 
     return FloatingActionButton(
       heroTag: null,
-      onPressed: () async {
-        showContextMenu(
-          context: context,
-          ref: ref,
-          builder: (context) => BottomSheetMenu(
-            child: LibraryMenu(
-              tabsRouter: tabsRouter,
-            ),
-          ),
-        );
-      },
+      onPressed: () async => showContextMenu(
+        context: context,
+        ref: ref,
+        builder: (context) => BottomSheetMenu(
+          child: _LibraryMenu(activeIndex: activeIndex),
+        ),
+      ),
       tooltip: 'List',
       child: Stack(
         children: [
@@ -292,13 +289,10 @@ class _LibraryFilterFab extends HookConsumerWidget {
   }
 }
 
-class LibraryMenu extends HookConsumerWidget {
-  final TabsRouter tabsRouter;
+class _LibraryMenu extends HookConsumerWidget {
+  final int activeIndex;
 
-  const LibraryMenu({
-    super.key,
-    required this.tabsRouter,
-  });
+  const _LibraryMenu({required this.activeIndex});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -348,13 +342,13 @@ class LibraryMenu extends HookConsumerWidget {
                     ),
                   ],
                 ),
-                _FilterToggleButton(tabsRouter: tabsRouter),
+                _FilterToggleButton(activeIndex: activeIndex),
               ],
             ),
           ),
         ),
         const SliverPadding(padding: EdgeInsets.only(top: 8)),
-        ListSortFilterOptions(index: tabsRouter.activeIndex),
+        _ListSortFilterOptions(index: activeIndex),
         const SliverPadding(padding: EdgeInsets.only(top: 16)),
       ],
     );
@@ -362,25 +356,21 @@ class LibraryMenu extends HookConsumerWidget {
 }
 
 class _FilterToggleButton extends HookConsumerWidget {
-  final TabsRouter tabsRouter;
+  final int activeIndex;
 
-  const _FilterToggleButton({
-    required this.tabsRouter,
-  });
+  const _FilterToggleButton({required this.activeIndex});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tabHasFilters = ref.watch(
-      libraryListQueryProvider(tabsRouter.activeIndex)
+      libraryListQueryProvider(activeIndex)
           .select((value) => value.query.filters.isNotEmpty),
     );
 
     return FilledButton(
       onPressed: tabHasFilters
           ? () {
-              ref
-                  .read(libraryListsProvider.notifier)
-                  .clearFilters(tabsRouter.activeIndex);
+              ref.read(libraryListsProvider.notifier).clearFilters(activeIndex);
             }
           : null,
       child: const Icon(Icons.filter_list_off_rounded),
@@ -388,13 +378,10 @@ class _FilterToggleButton extends HookConsumerWidget {
   }
 }
 
-class ListSortFilterOptions extends HookConsumerWidget {
+class _ListSortFilterOptions extends HookConsumerWidget {
   final int index;
 
-  const ListSortFilterOptions({
-    super.key,
-    required this.index,
-  });
+  const _ListSortFilterOptions({required this.index});
 
   void Function()? _filterOnEdit(
     String column,
@@ -473,7 +460,7 @@ class ListSortFilterOptions extends HookConsumerWidget {
         ),
         const SizedBox(height: 8),
         for (var column in list.options.sortColumns)
-          SortOptionTile(
+          _SortOptionTile(
             column: column,
             value: list.query.sort!.copyWith(column: column),
             groupValue: list.query.sort!,
@@ -495,7 +482,7 @@ class ListSortFilterOptions extends HookConsumerWidget {
           ),
         ),
         for (var column in list.options.filterColumns)
-          FilterOptionTile(
+          _FilterOptionTile(
             column: column,
             state: list.query.filters.singleWhereOrNull(
               (e) => e.column == column,
@@ -508,15 +495,14 @@ class ListSortFilterOptions extends HookConsumerWidget {
   }
 }
 
-class SortOptionTile extends HookConsumerWidget {
+class _SortOptionTile extends HookConsumerWidget {
   final String column;
   final SortBy value;
   final SortBy groupValue;
   final void Function(String? value) onColumnChanged;
   final void Function() onDirectionToggle;
 
-  const SortOptionTile({
-    super.key,
+  const _SortOptionTile({
     required this.column,
     required this.value,
     required this.groupValue,
@@ -552,14 +538,14 @@ class SortOptionTile extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return RadioListTile<String?>(
       value: value.column,
       groupValue: groupValue.column,
       onChanged: onColumnChanged,
       selected: value.column == groupValue.column,
-      title: Text(_sortTitle(l, column)),
+      title: Text(_sortTitle(localizations, column)),
       secondary: value.column == groupValue.column
           ? IconButton(
               icon: Icon(
@@ -574,14 +560,13 @@ class SortOptionTile extends HookConsumerWidget {
   }
 }
 
-class FilterOptionTile extends HookConsumerWidget {
+class _FilterOptionTile extends HookConsumerWidget {
   final String column;
   final FilterWith? state;
   final void Function(bool? value)? onChanged;
   final void Function()? onEdit;
 
-  const FilterOptionTile({
-    super.key,
+  const _FilterOptionTile({
     required this.column,
     required this.state,
     required this.onChanged,
@@ -612,7 +597,7 @@ class FilterOptionTile extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return CheckboxListTile(
       value: state == null
@@ -632,7 +617,7 @@ class FilterOptionTile extends HookConsumerWidget {
             isIn: (_) => true,
           ) ??
           false,
-      title: Text(_filterTitle(l, column)),
+      title: Text(_filterTitle(localizations, column)),
       secondary: onEdit == null
           ? null
           : IconButton(

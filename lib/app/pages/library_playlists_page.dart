@@ -1,7 +1,5 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:subtracks/app/app_router.dart';
 
 import '../../database/database.dart';
 import '../../state/settings.dart';
@@ -9,9 +7,13 @@ import '../hooks/use_list_query_paging_controller.dart';
 import '../items.dart';
 import '../lists.dart';
 
-@RoutePage()
 class LibraryPlaylistsPage extends HookConsumerWidget {
-  const LibraryPlaylistsPage({super.key});
+  const LibraryPlaylistsPage({
+    required this.onPlaylistPressed,
+    super.key,
+  });
+
+  final void Function(String playlistId) onPlaylistPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,7 +35,7 @@ class LibraryPlaylistsPage extends HookConsumerWidget {
       refreshSyncAll: true,
       itemBuilder: (context, item, index) => PlaylistListTile(
         playlist: item,
-        onTap: () => context.navigateTo(PlaylistSongsRoute(id: item.id)),
+        onTap: () => onPlaylistPressed(item.id),
       ),
     );
   }

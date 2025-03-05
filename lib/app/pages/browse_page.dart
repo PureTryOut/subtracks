@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -14,7 +13,6 @@ import '../../services/audio_service.dart';
 import '../../services/cache_service.dart';
 import '../../state/music.dart';
 import '../../state/settings.dart';
-import '../app_router.dart';
 import '../buttons.dart';
 import '../images.dart';
 import '../items.dart';
@@ -32,13 +30,21 @@ Stream<List<Album>> albumsCategoryList(
   return db.albumsList(sourceId, opt).watch();
 }
 
-@RoutePage()
 class BrowsePage extends HookConsumerWidget {
-  const BrowsePage({super.key});
+  const BrowsePage({
+    required this.onGenrePressed,
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
+    super.key,
+  });
+
+  final void Function(String genreId) onGenrePressed;
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     final frequent = ref
         .watch(
@@ -125,22 +131,31 @@ class BrowsePage extends HookConsumerWidget {
           _GenreCategory(
             title: 'Genres',
             items: genres?.toList() ?? [],
+            onGenrePressed: onGenrePressed,
           ),
           _AlbumCategory(
-            title: l.resourcesSortByFrequentlyPlayed,
+            title: localizations.resourcesSortByFrequentlyPlayed,
             items: frequent ?? [],
+            onAlbumPressed: onAlbumPressed,
+            onArtistPressed: onArtistPressed,
           ),
           _AlbumCategory(
-            title: l.resourcesSortByRecentlyPlayed,
+            title: localizations.resourcesSortByRecentlyPlayed,
             items: recent ?? [],
+            onAlbumPressed: onAlbumPressed,
+            onArtistPressed: onArtistPressed,
           ),
           _AlbumCategory(
-            title: l.resourcesFilterStarred,
+            title: localizations.resourcesFilterStarred,
             items: starred ?? [],
+            onAlbumPressed: onAlbumPressed,
+            onArtistPressed: onArtistPressed,
           ),
           _AlbumCategory(
-            title: l.resourcesSortByRandom,
+            title: localizations.resourcesSortByRandom,
             items: random ?? [],
+            onAlbumPressed: onAlbumPressed,
+            onArtistPressed: onArtistPressed,
           ),
           const SliverToBoxAdapter(child: FabPadding()),
         ],
@@ -152,10 +167,12 @@ class BrowsePage extends HookConsumerWidget {
 class _GenreCategory extends HookConsumerWidget {
   final String title;
   final List<String> items;
+  final void Function(String genreId) onGenrePressed;
 
   const _GenreCategory({
     required this.title,
     required this.items,
+    required this.onGenrePressed,
   });
 
   @override
@@ -166,7 +183,14 @@ class _GenreCategory extends HookConsumerWidget {
         title: title,
         height: 140,
         itemWidth: 140,
-        items: items.map((genre) => _GenreItem(genre: genre)).toList(),
+        items: items
+            .map(
+              (genre) => _GenreItem(
+                genre: genre,
+                onGenrePressed: onGenrePressed,
+              ),
+            )
+            .toList(),
       ),
     );
   }
@@ -174,9 +198,11 @@ class _GenreCategory extends HookConsumerWidget {
 
 class _GenreItem extends HookConsumerWidget {
   final String genre;
+  final void Function(String genreId) onGenrePressed;
 
   const _GenreItem({
     required this.genre,
+    required this.onGenrePressed,
   });
 
   @override
@@ -198,9 +224,7 @@ class _GenreItem extends HookConsumerWidget {
     }
 
     return ImageCard(
-      onTap: () {
-        context.navigateTo(GenreSongsRoute(genre: genre));
-      },
+      onTap: () => onGenrePressed(genre),
       child: Stack(
         alignment: AlignmentDirectional.center,
         children: [
@@ -235,9 +259,14 @@ class _AlbumCategory extends HookConsumerWidget {
   final String title;
   final List<Album> items;
 
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
+
   const _AlbumCategory({
     required this.title,
     required this.items,
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
   });
 
   @override
@@ -250,11 +279,8 @@ class _AlbumCategory extends HookConsumerWidget {
           .map(
             (album) => AlbumCard(
               album: album,
-              onTap: () => context.navigateTo(
-                AlbumSongsRoute(
-                  id: album.id,
-                ),
-              ),
+              onTap: () => onAlbumPressed(album.id),
+              onArtistPressed: onArtistPressed,
             ),
           )
           .toList(),

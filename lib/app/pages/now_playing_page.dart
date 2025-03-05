@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,9 +18,15 @@ import '../gradient.dart';
 import '../images.dart';
 import '../now_playing_bar.dart';
 
-@RoutePage()
 class NowPlayingPage extends HookConsumerWidget {
-  const NowPlayingPage({super.key});
+  const NowPlayingPage({
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
+    super.key,
+  });
+
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -47,41 +52,37 @@ class NowPlayingPage extends HookConsumerWidget {
                 softWrap: false,
                 overflow: TextOverflow.fade,
               ),
-              // Text(
-              //   itemData?.contextTitle ?? '',
-              //   style: theme.textTheme.titleMedium,
-              //   maxLines: 1,
-              //   softWrap: false,
-              //   overflow: TextOverflow.fade,
-              // ),
             ],
           ),
         ),
-        body: const Stack(
+        body: Stack(
           children: [
-            MediaItemGradient(),
+            const MediaItemGradient(),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: Column(
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: _Art(),
                     ),
                   ),
-                  SizedBox(height: 24),
-                  Padding(
+                  const SizedBox(height: 24),
+                  const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: _TrackInfo(),
                   ),
-                  SizedBox(height: 8),
-                  _Progress(),
+                  const SizedBox(height: 8),
+                  const _Progress(),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: _Controls(),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: _Controls(
+                      onAlbumPressed: onAlbumPressed,
+                      onArtistPressed: onArtistPressed,
+                    ),
                   ),
-                  SizedBox(height: 64),
+                  const SizedBox(height: 64),
                 ],
               ),
             ),
@@ -350,7 +351,13 @@ class ShuffleButton extends HookConsumerWidget {
 }
 
 class _Controls extends HookConsumerWidget {
-  const _Controls();
+  const _Controls({
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
+  });
+
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -387,7 +394,6 @@ class _Controls extends HookConsumerWidget {
           SizedBox(
             height: 40,
             child: Row(
-              // crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
@@ -396,7 +402,10 @@ class _Controls extends HookConsumerWidget {
                   iconSize: 30,
                   onPressed: () {},
                 ),
-                const _MoreButton(),
+                _MoreButton(
+                  onAlbumPressed: onAlbumPressed,
+                  onArtistPressed: onArtistPressed,
+                ),
               ],
             ),
           ),
@@ -407,7 +416,13 @@ class _Controls extends HookConsumerWidget {
 }
 
 class _MoreButton extends HookConsumerWidget {
-  const _MoreButton();
+  const _MoreButton({
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
+  });
+
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -423,7 +438,11 @@ class _MoreButton extends HookConsumerWidget {
                 context: context,
                 ref: ref,
                 builder: (context) => BottomSheetMenu(
-                  child: SongContextMenu(song: song),
+                  child: SongContextMenu(
+                    song: song,
+                    onAlbumPressed: onAlbumPressed,
+                    onArtistPressed: onArtistPressed,
+                  ),
                 ),
               );
             }

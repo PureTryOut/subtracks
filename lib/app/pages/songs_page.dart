@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:auto_route/auto_route.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -14,7 +13,6 @@ import '../../models/support.dart';
 import '../../services/audio_service.dart';
 import '../../services/cache_service.dart';
 import '../../state/music.dart';
-import '../../state/settings.dart';
 import '../../state/theme.dart';
 import '../buttons.dart';
 import '../context_menus.dart';
@@ -25,13 +23,16 @@ import '../images.dart';
 import '../items.dart';
 import '../lists.dart';
 
-@RoutePage()
 class AlbumSongsPage extends HookConsumerWidget {
   final String id;
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
 
   const AlbumSongsPage({
     super.key,
-    @pathParam required this.id,
+    required this.id,
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
   });
 
   @override
@@ -82,7 +83,10 @@ class AlbumSongsPage extends HookConsumerWidget {
         header: _AlbumHeader(
           album: album,
           play: () => play(shuffle: false),
+          onArtistPressed: onArtistPressed,
         ),
+        onAlbumPressed: onAlbumPressed,
+        onArtistPressed: onArtistPressed,
       ),
     );
   }
@@ -92,9 +96,12 @@ class _AlbumHeader extends HookConsumerWidget {
   final Album album;
   final void Function() play;
 
+  final void Function(String artistId) onArtistPressed;
+
   const _AlbumHeader({
     required this.album,
     required this.play,
+    required this.onArtistPressed,
   });
 
   @override
@@ -107,19 +114,22 @@ class _AlbumHeader extends HookConsumerWidget {
       album: album,
     );
 
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return _Header(
       title: album.name,
       subtitle: album.albumArtist,
       imageCache: cache.albumArt(album, thumbnail: false),
-      playText: l.resourcesAlbumActionsPlay,
+      playText: localizations.resourcesAlbumActionsPlay,
       onPlay: play,
       onMore: () => showContextMenu(
         context: context,
         ref: ref,
         builder: (context) => BottomSheetMenu(
-          child: AlbumContextMenu(album: album),
+          child: AlbumContextMenu(
+            album: album,
+            onArtistPressed: onArtistPressed,
+          ),
         ),
       ),
       downloadActions: downloadActions,
@@ -127,13 +137,16 @@ class _AlbumHeader extends HookConsumerWidget {
   }
 }
 
-@RoutePage()
 class PlaylistSongsPage extends HookConsumerWidget {
   final String id;
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
 
   const PlaylistSongsPage({
     super.key,
-    @pathParam required this.id,
+    required this.id,
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
   });
 
   @override
@@ -186,6 +199,8 @@ class PlaylistSongsPage extends HookConsumerWidget {
           playlist: playlist,
           play: () => play(shuffle: false),
         ),
+        onAlbumPressed: onAlbumPressed,
+        onArtistPressed: onArtistPressed,
       ),
     );
   }
@@ -210,13 +225,13 @@ class _PlaylistHeader extends HookConsumerWidget {
       playlist: playlist,
     );
 
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return _Header(
       title: playlist.name,
       subtitle: playlist.comment,
       imageCache: cache.playlistArt(playlist, thumbnail: false),
-      playText: l.resourcesPlaylistActionsPlay,
+      playText: localizations.resourcesPlaylistActionsPlay,
       onPlay: play,
       onMore: () {
         showContextMenu(
@@ -233,13 +248,16 @@ class _PlaylistHeader extends HookConsumerWidget {
   }
 }
 
-@RoutePage()
 class GenreSongsPage extends HookConsumerWidget {
   final String genre;
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
 
   const GenreSongsPage({
     super.key,
-    @pathParam required this.genre,
+    required this.genre,
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
   });
 
   @override
@@ -285,6 +303,8 @@ class GenreSongsPage extends HookConsumerWidget {
           onPressed: () => play(),
         ),
         header: _GenreHeader(genre: genre),
+        onAlbumPressed: onAlbumPressed,
+        onArtistPressed: onArtistPressed,
       ),
     );
   }
@@ -301,11 +321,11 @@ class _GenreHeader extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final count = ref.watch(songsByGenreCountProvider(genre)).valueOrNull ?? 0;
 
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return _Header(
       title: genre,
-      subtitle: l.resourcesSongCount(count),
+      subtitle: localizations.resourcesSongCount(count),
       downloadActions: const [],
     );
   }
@@ -347,25 +367,25 @@ class _SongsPage extends HookConsumerWidget {
   final ColorTheme? colors;
   final Widget header;
 
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
+
   const _SongsPage({
     required this.query,
     required this.getSongs,
-    this.onSongTap,
-    this.songImage = false,
     required this.background,
     required this.fab,
-    this.colors,
     required this.header,
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
+    this.onSongTap,
+    this.songImage = false,
+    this.colors,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final base = ref.watch(baseThemeProvider);
-    ref.listen(musicSourceProvider, (previous, next) {
-      if (next.id != previous?.id) {
-        context.router.popUntilRoot();
-      }
-    });
 
     final pagingController = useListQueryPagingController(
       ref,
@@ -412,6 +432,8 @@ class _SongsPage extends HookConsumerWidget {
                       image: songImage,
                       onTap: () =>
                           onSongTap != null ? onSongTap!(item, index) : null,
+                      onAlbumPressed: onAlbumPressed,
+                      onArtistPressed: onArtistPressed,
                     ),
                   ),
                 ],

@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:auto_route/auto_route.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -12,24 +11,24 @@ import '../../models/support.dart';
 import '../../services/audio_service.dart';
 import '../../state/music.dart';
 import '../../state/settings.dart';
-import '../app_router.dart';
 import '../buttons.dart';
 import '../images.dart';
 import '../items.dart';
 
-@RoutePage()
 class ArtistPage extends HookConsumerWidget {
   final String id;
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
 
   const ArtistPage({
     super.key,
-    @pathParam required this.id,
+    required this.id,
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(sourceIdProvider, (_, __) => context.router.popUntilRoot());
-
     final artist = ref.watch(artistProvider(id));
     final albums = ref.watch(albumsByArtistIdProvider(id));
 
@@ -89,11 +88,8 @@ class ArtistPage extends HookConsumerWidget {
                     return AlbumCard(
                       album: album,
                       subtitle: AlbumSubtitle.year,
-                      onTap: () => context.navigateTo(
-                        AlbumSongsRoute(
-                          id: album.id,
-                        ),
-                      ),
+                      onTap: () => onAlbumPressed(album.id),
+                      onArtistPressed: onArtistPressed,
                     );
                   },
                 ),

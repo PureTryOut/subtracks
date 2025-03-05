@@ -2,7 +2,6 @@
 
 import 'dart:async';
 
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -10,7 +9,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../models/music.dart';
 import '../services/cache_service.dart';
 import '../state/theme.dart';
-import 'app_router.dart';
 import 'hooks/use_download_actions.dart';
 import 'images.dart';
 
@@ -75,10 +73,12 @@ class BottomSheetMenu extends HookConsumerWidget {
 
 class AlbumContextMenu extends HookConsumerWidget {
   final Album album;
+  final void Function(String artistId) onArtistPressed;
 
   const AlbumContextMenu({
     super.key,
     required this.album,
+    required this.onArtistPressed,
   });
 
   @override
@@ -94,7 +94,11 @@ class AlbumContextMenu extends HookConsumerWidget {
         _AlbumHeader(album: album),
         const SizedBox(height: 8),
         const _Star(),
-        if (album.artistId != null) _ViewArtist(id: album.artistId!),
+        if (album.artistId != null)
+          _ViewArtist(
+            id: album.artistId!,
+            onArtistPressed: onArtistPressed,
+          ),
         for (var action in downloadActions)
           _DownloadAction(key: ValueKey(action.type), downloadAction: action),
       ],
@@ -104,10 +108,14 @@ class AlbumContextMenu extends HookConsumerWidget {
 
 class SongContextMenu extends HookConsumerWidget {
   final Song song;
+  final void Function(String albumId) onAlbumPressed;
+  final void Function(String artistId) onArtistPressed;
 
   const SongContextMenu({
     super.key,
     required this.song,
+    required this.onAlbumPressed,
+    required this.onArtistPressed,
   });
 
   @override
@@ -117,9 +125,16 @@ class SongContextMenu extends HookConsumerWidget {
         _SongHeader(song: song),
         const SizedBox(height: 8),
         const _Star(),
-        if (song.artistId != null) _ViewArtist(id: song.artistId!),
-        if (song.albumId != null) _ViewAlbum(id: song.albumId!),
-        // const _DownloadAction(),
+        if (song.artistId != null)
+          _ViewArtist(
+            id: song.artistId!,
+            onArtistPressed: onArtistPressed,
+          ),
+        if (song.albumId != null)
+          _ViewAlbum(
+            id: song.albumId!,
+            onAlbumPressed: onAlbumPressed,
+          ),
       ],
     );
   }
@@ -222,10 +237,10 @@ class _ArtistHeader extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     return _Header(
       title: artist.name,
-      subtitle: l.resourcesAlbumCount(artist.albumCount),
+      subtitle: localizations.resourcesAlbumCount(artist.albumCount),
       image: CircleClip(child: ArtistArtImage(artistId: artist.id)),
     );
   }
@@ -241,10 +256,10 @@ class _PlaylistHeader extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cache = ref.watch(cacheServiceProvider);
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     return _Header(
       title: playlist.name,
-      subtitle: l.resourcesSongCount(playlist.songCount),
+      subtitle: localizations.resourcesSongCount(playlist.songCount),
       image: CardClip(
         child: UriCacheInfoImage(
           cache: cache.playlistArt(playlist, thumbnail: true),
@@ -297,9 +312,9 @@ class _Star extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     return _MenuItem(
-      title: l.actionsStar,
+      title: localizations.actionsStar,
       icon: const Icon(Icons.star_outline_rounded),
       onTap: () {},
     );
@@ -327,9 +342,9 @@ class _DownloadAction extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     return _MenuItem(
-      title: _actionText(l),
+      title: _actionText(localizations),
       icon: downloadAction.iconBuilder(context),
       onTap: downloadAction.action,
     );
@@ -338,54 +353,40 @@ class _DownloadAction extends HookConsumerWidget {
 
 class _ViewArtist extends HookConsumerWidget {
   final String id;
+  final void Function(String artistId) onArtistPressed;
 
   const _ViewArtist({
     required this.id,
+    required this.onArtistPressed,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     return _MenuItem(
-      title: l.resourcesArtistActionsView,
+      title: localizations.resourcesArtistActionsView,
       icon: const Icon(Icons.person_rounded),
-      onTap: () async {
-        final router = context.router;
-
-        router.pop();
-        if (router.currentPath == '/now-playing') {
-          router.pop();
-          await router.navigate(const LibraryAlbumsRoute());
-        }
-        await router.navigate(ArtistRoute(id: id));
-      },
+      onTap: () => onArtistPressed(id),
     );
   }
 }
 
 class _ViewAlbum extends HookConsumerWidget {
   final String id;
+  final void Function(String albumId) onAlbumPressed;
 
   const _ViewAlbum({
     required this.id,
+    required this.onAlbumPressed,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     return _MenuItem(
-      title: l.resourcesAlbumActionsView,
+      title: localizations.resourcesAlbumActionsView,
       icon: const Icon(Icons.album_rounded),
-      onTap: () async {
-        final router = context.router;
-
-        router.pop();
-        if (router.currentPath == '/now-playing') {
-          router.pop();
-          await router.navigate(const LibraryAlbumsRoute());
-        }
-        await router.navigate(AlbumSongsRoute(id: id));
-      },
+      onTap: () => onAlbumPressed(id),
     );
   }
 }

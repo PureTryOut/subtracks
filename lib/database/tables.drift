@@ -32,7 +32,6 @@ CREATE TABLE last_bottom_nav_state(
 
 CREATE TABLE last_library_state(
   id INT NOT NULL PRIMARY KEY,
-  tab TEXT NOT NULL,
   albums_list TEXT NOT NULL MAPPED BY `const ListQueryConverter()`,
   artists_list TEXT NOT NULL MAPPED BY `const ListQueryConverter()`,
   playlists_list TEXT NOT NULL MAPPED BY `const ListQueryConverter()`,

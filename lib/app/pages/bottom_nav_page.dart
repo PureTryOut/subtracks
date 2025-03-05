@@ -1,91 +1,81 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../database/database.dart';
 import '../../services/settings_service.dart';
 import '../../state/settings.dart';
-import '../app_router.dart';
 import '../now_playing_bar.dart';
 
-part 'bottom_nav_page.g.dart';
-
-@Riverpod(keepAlive: true)
-TabObserver bottomTabObserver(Ref ref) {
-  return TabObserver();
-}
-
-@Riverpod(keepAlive: true)
-Stream<String> bottomTabPath(Ref ref) async* {
-  final observer = ref.watch(bottomTabObserverProvider);
-  await for (var tab in observer.path) {
-    yield tab;
-  }
-}
-
-@Riverpod(keepAlive: true)
-class LastBottomNavStateService extends _$LastBottomNavStateService {
-  @override
-  Future<void> build() async {
-    final db = ref.watch(databaseProvider);
-    final tab = ref.watch(bottomTabPathProvider).valueOrNull;
-    if (tab == null || tab == 'settings' || tab == 'search') {
-      return;
-    }
-
-    await db.saveLastBottomNavState(LastBottomNavStateData(id: 1, tab: tab));
-  }
-}
-
-@RoutePage()
 class BottomNavTabsPage extends HookConsumerWidget {
-  const BottomNavTabsPage({super.key});
+  const BottomNavTabsPage({
+    required this.location,
+    required this.child,
+    required this.onCurrentSongPressed,
+    required this.onLibraryPressed,
+    required this.onBrowsePressed,
+    required this.onSearchPressed,
+    required this.onSettingsPressed,
+    super.key,
+  });
+
+  final String location;
+  final Widget child;
+
+  final VoidCallback onCurrentSongPressed;
+  final VoidCallback onLibraryPressed;
+  final VoidCallback onBrowsePressed;
+  final VoidCallback onSearchPressed;
+  final VoidCallback onSettingsPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    final observer = ref.watch(bottomTabObserverProvider);
     const navElevation = 3.0;
 
-    return AutoTabsRouter(
-      lazyLoad: false,
-      inheritNavigatorObservers: false,
-      navigatorObservers: () => [observer],
-      routes: const [
-        LibraryAlbumsRoute(),
-        BrowseRoute(),
-        SearchRoute(),
-        SettingsRoute(),
-      ],
-      builder: (context, child) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light.copyWith(
-            systemNavigationBarColor: ElevationOverlay.applySurfaceTint(
-              theme.colorScheme.surface,
-              theme.colorScheme.surfaceTint,
-              navElevation,
-            ),
-            statusBarColor: Colors.transparent,
+    var activePageIndex = 0;
+    if (location.startsWith('/library')) {
+      activePageIndex = 0;
+    }
+    if (location.startsWith('/browse')) {
+      activePageIndex = 1;
+    }
+    if (location.startsWith('/search')) {
+      activePageIndex = 2;
+    }
+    if (location.startsWith('/settings')) {
+      activePageIndex = 3;
+    }
+
+    return Scaffold(
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light.copyWith(
+          systemNavigationBarColor: ElevationOverlay.applySurfaceTint(
+            theme.colorScheme.surface,
+            theme.colorScheme.surfaceTint,
+            navElevation,
           ),
-          child: Scaffold(
-            body: Stack(
-              alignment: AlignmentDirectional.bottomStart,
-              children: [
-                child,
-                const OfflineIndicator(),
-              ],
-            ),
-            bottomNavigationBar: const _BottomNavBar(
-              navElevation: navElevation,
-            ),
-          ),
-        );
-      },
+          statusBarColor: Colors.transparent,
+        ),
+        child: Stack(
+          alignment: AlignmentDirectional.bottomStart,
+          children: [
+            child,
+            const OfflineIndicator(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: _BottomNavBar(
+        navElevation: navElevation,
+        activeIndex: activePageIndex,
+        onCurrentSongPressed: onCurrentSongPressed,
+        onLibraryPressed: onLibraryPressed,
+        onBrowsePressed: onBrowsePressed,
+        onSearchPressed: onSearchPressed,
+        onSettingsPressed: onSettingsPressed,
+      ),
     );
   }
 }
@@ -144,28 +134,38 @@ class OfflineIndicator extends HookConsumerWidget {
 
 class _BottomNavBar extends HookConsumerWidget {
   final double navElevation;
+  final int activeIndex;
+
+  final VoidCallback onCurrentSongPressed;
+  final VoidCallback onLibraryPressed;
+  final VoidCallback onBrowsePressed;
+  final VoidCallback onSearchPressed;
+  final VoidCallback onSettingsPressed;
 
   const _BottomNavBar({
     required this.navElevation,
+    required this.activeIndex,
+    required this.onCurrentSongPressed,
+    required this.onLibraryPressed,
+    required this.onBrowsePressed,
+    required this.onSearchPressed,
+    required this.onSettingsPressed,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final iconTheme = IconTheme.of(context);
-    final tabsRouter = AutoTabsRouter.of(context);
-
-    useListenableSelector(tabsRouter, () => tabsRouter.activeIndex);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        const NowPlayingBar(),
+        NowPlayingBar(onPressed: onCurrentSongPressed),
         NavigationBar(
           elevation: navElevation,
           height: 50,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-          selectedIndex: tabsRouter.activeIndex,
+          selectedIndex: activeIndex,
           onDestinationSelected: (index) {
             // TODO: replace this with a proper first-time setup flow
             final hasActiveSource = ref.read(
@@ -175,9 +175,21 @@ class _BottomNavBar extends HookConsumerWidget {
             );
 
             if (!hasActiveSource) {
-              tabsRouter.setActiveIndex(3);
-            } else {
-              tabsRouter.setActiveIndex(index);
+              onSettingsPressed();
+            }
+
+            switch (index) {
+              case 0:
+                onLibraryPressed();
+                break;
+              case 1:
+                onBrowsePressed();
+                break;
+              case 2:
+                onSearchPressed();
+                break;
+              case 3:
+                onSettingsPressed();
             }
           },
           destinations: [

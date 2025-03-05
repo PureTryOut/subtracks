@@ -2,6 +2,7 @@ import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:subtracks/app/routes.dart';
 
 import '../state/init.dart';
 import '../state/theme.dart';
@@ -37,17 +38,21 @@ class App extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appRouter = ref.watch(routerProvider);
+    var router = ref.watch(routesProvider);
     final base = ref.watch(baseThemeProvider);
 
     return MaterialApp.router(
       theme: base.theme,
       debugShowCheckedModeBanner: false,
-      routerDelegate: appRouter.delegate(),
-      routeInformationParser: appRouter.defaultRouteParser(),
+      routerConfig: router,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: [...AppLocalizations.supportedLocales]
         ..moveToTheFront(const Locale('en')),
+      builder: (context, child) => Overlay(
+        initialEntries: [
+          OverlayEntry(builder: (context) => child!),
+        ],
+      ),
     );
   }
 }
