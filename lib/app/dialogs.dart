@@ -63,12 +63,14 @@ class MultipleChoiceDialog<T> extends HookConsumerWidget {
         int: (value) => value.option,
         string: (value) => value.option,
       ) as T;
-      choices.add(RadioListTile<T>(
-        value: value,
-        groupValue: state.value,
-        title: Text(opt.title),
-        onChanged: (value) => state.value = value as T,
-      ));
+      choices.add(
+        RadioListTile<T>(
+          value: value,
+          groupValue: state.value,
+          title: Text(opt.title),
+          onChanged: (value) => state.value = value as T,
+        ),
+      );
     }
 
     return AlertDialog(

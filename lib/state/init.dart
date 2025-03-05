@@ -34,9 +34,9 @@ FutureOr<Uri> placeholderImageUri(PlaceholderImageUriRef ref) async {
   final byteData = await rootBundle.load('assets/placeholder.png');
   final docsDir = await getApplicationDocumentsDirectory();
 
-  return (await File('${docsDir.path}/placeholder.png').writeAsBytes(byteData
-          .buffer
-          .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes)))
+  return (await File('${docsDir.path}/placeholder.png').writeAsBytes(
+    byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
+  ))
       .uri;
 }
 
@@ -46,8 +46,8 @@ FutureOr<Uri> placeholderThumbImageUri(PlaceholderThumbImageUriRef ref) async {
   final docsDir = await getApplicationDocumentsDirectory();
 
   return (await File('${docsDir.path}/placeholder_thumb.png').writeAsBytes(
-          byteData.buffer
-              .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes)))
+    byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
+  ))
       .uri;
 }
 

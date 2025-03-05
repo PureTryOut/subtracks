@@ -60,10 +60,10 @@ class SubsonicSource implements MusicSource {
     ]);
 
     final frequentlyPlayed = {
-      for (var i = 0; i < extras[0].length; i++) extras[0][i]: i
+      for (var i = 0; i < extras[0].length; i++) extras[0][i]: i,
     };
     final recentlyPlayed = {
-      for (var i = 0; i < extras[1].length; i++) extras[1][i]: i
+      for (var i = 0; i < extras[1].length; i++) extras[1][i]: i,
     };
 
     await for (var albums in _albumList('newest')) {
@@ -91,7 +91,7 @@ class SubsonicSource implements MusicSource {
         PlaylistWithSongsCompanion(
           _mapPlaylist(res.xml.getElement('playlist')!),
           res.xml.findAllElements('entry').mapIndexed(_mapPlaylistSong),
-        )
+        ),
       ];
     });
   }
@@ -141,11 +141,13 @@ class SubsonicSource implements MusicSource {
   @override
   Future<Uri?> artistArtUri(String artistId, {bool thumbnail = true}) async {
     final res = await client.get('getArtistInfo2', {'id': artistId});
-    return Uri.tryParse(res.xml
-            .getElement('artistInfo2')
-            ?.getElement(thumbnail ? 'smallImageUrl' : 'largeImageUrl')
-            ?.value ??
-        '');
+    return Uri.tryParse(
+      res.xml
+              .getElement('artistInfo2')
+              ?.getElement(thumbnail ? 'smallImageUrl' : 'largeImageUrl')
+              ?.value ??
+          '',
+    );
   }
 
   Stream<Iterable<XmlElement>> _albumList(String type) async* {
@@ -212,15 +214,19 @@ class SubsonicSource implements MusicSource {
     return AlbumsCompanion.insert(
       sourceId: id,
       id: 'album.${e.getAttribute('id')!}',
-      artistId: Value(e.getAttribute('artistId') != null
-          ? 'artist.${e.getAttribute('artistId')}'
-          : null),
+      artistId: Value(
+        e.getAttribute('artistId') != null
+            ? 'artist.${e.getAttribute('artistId')}'
+            : null,
+      ),
       name: e.getAttribute('name') ?? 'Album ${e.getAttribute('id')}',
       albumArtist: Value(e.getAttribute('artist')),
       created: DateTimeExt.parseUtc(e.getAttribute('created')!),
-      coverArt: Value(e.getAttribute('coverArt') != null
-          ? 'coverArt.${e.getAttribute('coverArt')}'
-          : null),
+      coverArt: Value(
+        e.getAttribute('coverArt') != null
+            ? 'coverArt.${e.getAttribute('coverArt')}'
+            : null,
+      ),
       year: e.getAttribute('year') != null
           ? Value(int.parse(e.getAttribute('year')!))
           : const Value(null),
@@ -238,9 +244,11 @@ class SubsonicSource implements MusicSource {
       id: 'playlist.${e.getAttribute('id')!}',
       name: e.getAttribute('name') ?? 'Playlist ${e.getAttribute('id')}',
       comment: Value(e.getAttribute('comment')),
-      coverArt: Value(e.getAttribute('coverArt') != null
-          ? 'coverArt.${e.getAttribute('coverArt')}'
-          : null),
+      coverArt: Value(
+        e.getAttribute('coverArt') != null
+            ? 'coverArt.${e.getAttribute('coverArt')}'
+            : null,
+      ),
       songCount: int.parse(e.getAttribute('songCount')!),
       created: DateTimeExt.parseUtc(e.getAttribute('created')!),
     );
@@ -250,18 +258,25 @@ class SubsonicSource implements MusicSource {
     return SongsCompanion.insert(
       sourceId: id,
       id: 'song.${e.getAttribute('id')!}',
-      albumId: Value(e.getAttribute('albumId') != null
-          ? 'album.${e.getAttribute('albumId')}'
-          : null),
-      artistId: Value(e.getAttribute('artistId') != null
-          ? 'artist.${e.getAttribute('artistId')}'
-          : null),
+      albumId: Value(
+        e.getAttribute('albumId') != null
+            ? 'album.${e.getAttribute('albumId')}'
+            : null,
+      ),
+      artistId: Value(
+        e.getAttribute('artistId') != null
+            ? 'artist.${e.getAttribute('artistId')}'
+            : null,
+      ),
       title: e.getAttribute('title') ?? 'Song ${e.getAttribute('id')}',
       album: Value(e.getAttribute('album')),
       artist: Value(e.getAttribute('artist')),
       duration: e.getAttribute('duration') != null
-          ? Value(Duration(
-              seconds: int.parse(e.getAttribute('duration').toString())))
+          ? Value(
+              Duration(
+                seconds: int.parse(e.getAttribute('duration').toString()),
+              ),
+            )
           : const Value(null),
       track: e.getAttribute('track') != null
           ? Value(int.parse(e.getAttribute('track')!))

@@ -211,9 +211,11 @@ class ArtistListTile extends HookConsumerWidget {
         child: ArtistArtImage(artistId: artist.id),
       ),
       title: Text(artist.name),
-      subtitle: Text(l.resourcesAlbumCount(
-        artist.albumCount,
-      )),
+      subtitle: Text(
+        l.resourcesAlbumCount(
+          artist.albumCount,
+        ),
+      ),
       onTap: onTap,
       onLongPress: () {
         showContextMenu(
@@ -252,9 +254,11 @@ class PlaylistListTile extends HookConsumerWidget {
         child: UriCacheInfoImage(cache: cache),
       ),
       title: Text(playlist.name),
-      subtitle: Text(l.resourcesSongCount(
-        playlist.songCount,
-      )),
+      subtitle: Text(
+        l.resourcesSongCount(
+          playlist.songCount,
+        ),
+      ),
       onTap: onTap,
       onLongPress: () {
         showContextMenu(
@@ -321,17 +325,23 @@ class _SongSubtitle extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final downloadTaskId = ref.watch(songProvider(song.id).select(
-      (value) => value.valueOrNull?.downloadTaskId,
-    ));
-    final downloadFilePath = ref.watch(songProvider(song.id).select(
-      (value) => value.valueOrNull?.downloadFilePath,
-    ));
-    final download = ref.watch(downloadServiceProvider.select(
-      (value) => value.downloads.firstWhereOrNull(
-        (e) => e.taskId == downloadTaskId,
+    final downloadTaskId = ref.watch(
+      songProvider(song.id).select(
+        (value) => value.valueOrNull?.downloadTaskId,
       ),
-    ));
+    );
+    final downloadFilePath = ref.watch(
+      songProvider(song.id).select(
+        (value) => value.valueOrNull?.downloadFilePath,
+      ),
+    );
+    final download = ref.watch(
+      downloadServiceProvider.select(
+        (value) => value.downloads.firstWhereOrNull(
+          (e) => e.taskId == downloadTaskId,
+        ),
+      ),
+    );
 
     final inheritedStyle = DefaultTextStyle.of(context).style;
 

@@ -24,10 +24,12 @@ class SourcePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final source = ref.watch(settingsServiceProvider.select(
-      (value) => value.sources.singleWhereOrNull((e) => e.id == id)
-          as SubsonicSettings?,
-    ));
+    final source = ref.watch(
+      settingsServiceProvider.select(
+        (value) => value.sources.singleWhereOrNull((e) => e.id == id)
+            as SubsonicSettings?,
+      ),
+    );
     final form = useState(GlobalKey<FormState>()).value;
     final theme = Theme.of(context);
     final l = AppLocalizations.of(context);

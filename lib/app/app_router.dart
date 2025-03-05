@@ -66,53 +66,70 @@ class EmptyRouterPage extends AutoRouter {
 @MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
-    AutoRoute(path: '/', name: 'RootRouter', page: EmptyRouterPage, children: [
-      AutoRoute(path: '', page: BottomNavTabsPage, children: [
+    AutoRoute(
+      path: '/',
+      name: 'RootRouter',
+      page: EmptyRouterPage,
+      children: [
         AutoRoute(
-            path: 'library',
-            name: 'LibraryRouter',
-            page: EmptyRouterPage,
-            children: [
-              AutoRoute(path: '', page: LibraryTabsPage, children: [
-                AutoRoute(path: 'albums', page: LibraryAlbumsPage),
-                AutoRoute(path: 'artists', page: LibraryArtistsPage),
-                AutoRoute(path: 'playlists', page: LibraryPlaylistsPage),
-                AutoRoute(path: 'songs', page: LibrarySongsPage),
-              ]),
-              ...itemRoutes,
-            ]),
-        AutoRoute(
-            path: 'browse',
-            name: 'BrowseRouter',
-            page: EmptyRouterPage,
-            children: [
-              AutoRoute(path: '', page: BrowsePage),
-              ...itemRoutes,
-            ]),
-        AutoRoute(
-            path: 'search',
-            name: 'SearchRouter',
-            page: EmptyRouterPage,
-            children: [
-              AutoRoute(path: '', page: SearchPage),
-              ...itemRoutes,
-            ]),
-        AutoRoute(
-            path: 'settings',
-            name: 'SettingsRouter',
-            page: EmptyRouterPage,
-            children: [
-              AutoRoute(path: '', page: SettingsPage),
-              CustomRoute(
-                path: 'source/:id',
-                page: SourcePage,
-                transitionsBuilder: kCustomTransitionBuilder,
-                durationInMilliseconds: kCustomTransitionDuration,
-                reverseDurationInMilliseconds: kCustomTransitionDuration,
-              ),
-            ]),
-      ]),
-    ]),
+          path: '',
+          page: BottomNavTabsPage,
+          children: [
+            AutoRoute(
+              path: 'library',
+              name: 'LibraryRouter',
+              page: EmptyRouterPage,
+              children: [
+                AutoRoute(
+                  path: '',
+                  page: LibraryTabsPage,
+                  children: [
+                    AutoRoute(path: 'albums', page: LibraryAlbumsPage),
+                    AutoRoute(path: 'artists', page: LibraryArtistsPage),
+                    AutoRoute(path: 'playlists', page: LibraryPlaylistsPage),
+                    AutoRoute(path: 'songs', page: LibrarySongsPage),
+                  ],
+                ),
+                ...itemRoutes,
+              ],
+            ),
+            AutoRoute(
+              path: 'browse',
+              name: 'BrowseRouter',
+              page: EmptyRouterPage,
+              children: [
+                AutoRoute(path: '', page: BrowsePage),
+                ...itemRoutes,
+              ],
+            ),
+            AutoRoute(
+              path: 'search',
+              name: 'SearchRouter',
+              page: EmptyRouterPage,
+              children: [
+                AutoRoute(path: '', page: SearchPage),
+                ...itemRoutes,
+              ],
+            ),
+            AutoRoute(
+              path: 'settings',
+              name: 'SettingsRouter',
+              page: EmptyRouterPage,
+              children: [
+                AutoRoute(path: '', page: SettingsPage),
+                CustomRoute(
+                  path: 'source/:id',
+                  page: SourcePage,
+                  transitionsBuilder: kCustomTransitionBuilder,
+                  durationInMilliseconds: kCustomTransitionDuration,
+                  reverseDurationInMilliseconds: kCustomTransitionDuration,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ),
     CustomRoute(
       path: '/now-playing',
       page: NowPlayingPage,

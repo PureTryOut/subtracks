@@ -61,7 +61,9 @@ class ErrorLoggingDatabase implements QueryExecutor {
 
   @override
   Future<List<Map<String, Object?>>> runSelect(
-      String statement, List<Object?> args) {
+    String statement,
+    List<Object?> args,
+  ) {
     return _handleErrors(() => inner.runSelect(statement, args));
   }
 
@@ -76,8 +78,9 @@ class _ErrorLoggingTransactionExecutor extends ErrorLoggingDatabase
   final TransactionExecutor transaction;
 
   _ErrorLoggingTransactionExecutor(
-      this.transaction, void Function(Object, StackTrace) onError)
-      : super(transaction, onError);
+    this.transaction,
+    void Function(Object, StackTrace) onError,
+  ) : super(transaction, onError);
 
   @override
   Future<void> rollback() {

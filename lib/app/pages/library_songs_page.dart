@@ -20,9 +20,11 @@ class LibrarySongsPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final audio = ref.watch(audioControlProvider);
 
-    final query = ref.watch(libraryListQueryProvider(3).select(
-      (value) => value.query,
-    ));
+    final query = ref.watch(
+      libraryListQueryProvider(3).select(
+        (value) => value.query,
+      ),
+    );
 
     final getSongs = useCallback(
       (ListQuery query) {

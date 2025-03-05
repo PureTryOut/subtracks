@@ -11,12 +11,16 @@ part 'settings.g.dart';
 
 @Riverpod(keepAlive: true)
 MusicSource musicSource(MusicSourceRef ref) {
-  final settings = ref.watch(settingsServiceProvider.select(
-    (value) => value.activeSource,
-  )) as SubsonicSettings;
-  final streamFormat = ref.watch(settingsServiceProvider.select(
-    (value) => value.app.streamFormat,
-  ));
+  final settings = ref.watch(
+    settingsServiceProvider.select(
+      (value) => value.activeSource,
+    ),
+  ) as SubsonicSettings;
+  final streamFormat = ref.watch(
+    settingsServiceProvider.select(
+      (value) => value.app.streamFormat,
+    ),
+  );
   final maxBitrate = ref.watch(maxBitrateProvider).requireValue;
   final http = ref.watch(httpClientProvider);
 
@@ -48,9 +52,11 @@ Stream<NetworkMode> networkMode(NetworkModeRef ref) async* {
 
 @Riverpod(keepAlive: true)
 Future<int> maxBitrate(MaxBitrateRef ref) async {
-  final settings = ref.watch(settingsServiceProvider.select(
-    (value) => value.app,
-  ));
+  final settings = ref.watch(
+    settingsServiceProvider.select(
+      (value) => value.app,
+    ),
+  );
   final networkMode = ref.watch(networkModeProvider).requireValue;
 
   return networkMode == NetworkMode.wifi
@@ -71,9 +77,11 @@ class OfflineMode extends _$OfflineMode {
   }
 
   Future<void> setMode(bool value) async {
-    final hasSource = ref.read(settingsServiceProvider.select(
-      (value) => value.activeSource != null,
-    ));
+    final hasSource = ref.read(
+      settingsServiceProvider.select(
+        (value) => value.activeSource != null,
+      ),
+    );
     if (!hasSource) return;
 
     if (value == false && state == true) {

@@ -97,29 +97,31 @@ class AudioControl extends BaseAudioHandler with QueueHandler, SeekHandler {
   AudioControl(this._player, this._ref) {
     _player.playbackEventStream.listen((PlaybackEvent event) {
       final playing = _player.playing;
-      playbackState.add(playbackState.value.copyWith(
-        controls: [
-          MediaControl.skipToPrevious,
-          if (playing) MediaControl.pause else MediaControl.play,
-          MediaControl.stop,
-          MediaControl.skipToNext,
-        ],
-        systemActions: const {
-          MediaAction.seek,
-        },
-        androidCompactActionIndices: const [0, 1, 3],
-        processingState: const {
-          ProcessingState.idle: AudioProcessingState.idle,
-          ProcessingState.loading: AudioProcessingState.loading,
-          ProcessingState.buffering: AudioProcessingState.buffering,
-          ProcessingState.ready: AudioProcessingState.ready,
-          ProcessingState.completed: AudioProcessingState.completed,
-        }[_player.processingState]!,
-        playing: playing,
-        updatePosition: _player.position,
-        bufferedPosition: _player.bufferedPosition,
-        queueIndex: event.currentIndex,
-      ));
+      playbackState.add(
+        playbackState.value.copyWith(
+          controls: [
+            MediaControl.skipToPrevious,
+            if (playing) MediaControl.pause else MediaControl.play,
+            MediaControl.stop,
+            MediaControl.skipToNext,
+          ],
+          systemActions: const {
+            MediaAction.seek,
+          },
+          androidCompactActionIndices: const [0, 1, 3],
+          processingState: const {
+            ProcessingState.idle: AudioProcessingState.idle,
+            ProcessingState.loading: AudioProcessingState.loading,
+            ProcessingState.buffering: AudioProcessingState.buffering,
+            ProcessingState.ready: AudioProcessingState.ready,
+            ProcessingState.completed: AudioProcessingState.completed,
+          }[_player.processingState]!,
+          playing: playing,
+          updatePosition: _player.position,
+          bufferedPosition: _player.bufferedPosition,
+          queueIndex: event.currentIndex,
+        ),
+      );
     });
 
     _player.playbackEventStream.doOnError((e, st) async {
@@ -127,11 +129,13 @@ class AudioControl extends BaseAudioHandler with QueueHandler, SeekHandler {
     });
 
     shuffleIndicies.listen((value) {
-      playbackState.add(playbackState.value.copyWith(
-        shuffleMode: value != null
-            ? AudioServiceShuffleMode.all
-            : AudioServiceShuffleMode.none,
-      ));
+      playbackState.add(
+        playbackState.value.copyWith(
+          shuffleMode: value != null
+              ? AudioServiceShuffleMode.all
+              : AudioServiceShuffleMode.none,
+        ),
+      );
     });
 
     repeatMode.listen((value) {
@@ -315,9 +319,11 @@ class AudioControl extends BaseAudioHandler with QueueHandler, SeekHandler {
       await _db.clearQueue();
 
       while (_queueLength! <= startIndex!) {
-        final songs = await getSongs(query.copyWith(
-          page: Pagination(limit: limit, offset: _queueLength!),
-        ));
+        final songs = await getSongs(
+          query.copyWith(
+            page: Pagination(limit: limit, offset: _queueLength!),
+          ),
+        );
         await _loadQueueSongs(songs, _queueLength!, context, contextId);
         if (songs.length < limit) {
           break;
@@ -340,9 +346,11 @@ class AudioControl extends BaseAudioHandler with QueueHandler, SeekHandler {
     // no need to do extra loading if we've already loaded everything
     if (_queueLength! < limit) return;
     while (true) {
-      final songs = await getSongs(query.copyWith(
-        page: Pagination(limit: limit, offset: _queueLength!),
-      ));
+      final songs = await getSongs(
+        query.copyWith(
+          page: Pagination(limit: limit, offset: _queueLength!),
+        ),
+      );
       await _loadQueueSongs(songs, _queueLength!, context, contextId);
       if (songs.length < limit || _queueLength! >= maxLength) {
         break;
@@ -356,15 +364,17 @@ class AudioControl extends BaseAudioHandler with QueueHandler, SeekHandler {
     QueueContextType context,
     String? contextId,
   ) async {
-    await _db.insertQueue(songs.mapIndexed(
-      (i, song) => QueueCompanion.insert(
-        index: Value(i + (_queueLength ?? 0)),
-        sourceId: song.sourceId,
-        id: song.id,
-        context: context,
-        contextId: Value(contextId),
+    await _db.insertQueue(
+      songs.mapIndexed(
+        (i, song) => QueueCompanion.insert(
+          index: Value(i + (_queueLength ?? 0)),
+          sourceId: song.sourceId,
+          id: song.id,
+          context: context,
+          contextId: Value(contextId),
+        ),
       ),
-    ));
+    );
 
     _queueLength = (_queueLength ?? 0) + songs.length;
     if (shuffleIndicies.valueOrNull != null) {
@@ -574,7 +584,7 @@ class AudioControl extends BaseAudioHandler with QueueHandler, SeekHandler {
     final albumIds = songs.map((e) => e.albumId).nonNulls.toSet();
     final albums = await _db.albumsInIds(_sourceId, albumIds.toList()).get();
     final albumArtMap = {
-      for (var album in albums) album.id: _mapArtCache(album)
+      for (var album in albums) album.id: _mapArtCache(album),
     };
 
     final queueItems = slice.map(

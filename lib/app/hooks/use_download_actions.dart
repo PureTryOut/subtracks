@@ -84,12 +84,17 @@ List<DownloadAction> useListDownloadActions({
 
   final sourceId = SourceId.from(list);
   final offline = ref.watch(offlineModeProvider);
-  final listDownloadInProgress = ref.watch(downloadServiceProvider
-      .select((value) => value.listDownloads.contains(sourceId)));
-  final listDeleteInProgress = ref.watch(downloadServiceProvider
-      .select((value) => value.deletes.contains(sourceId)));
-  final listCancelInProgress = ref.watch(downloadServiceProvider
-      .select((value) => value.listCancels.contains(sourceId)));
+  final listDownloadInProgress = ref.watch(
+    downloadServiceProvider
+        .select((value) => value.listDownloads.contains(sourceId)),
+  );
+  final listDeleteInProgress = ref.watch(
+    downloadServiceProvider.select((value) => value.deletes.contains(sourceId)),
+  );
+  final listCancelInProgress = ref.watch(
+    downloadServiceProvider
+        .select((value) => value.listCancels.contains(sourceId)),
+  );
 
   DownloadAction delete() {
     return DownloadAction(

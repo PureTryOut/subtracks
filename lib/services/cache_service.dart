@@ -85,9 +85,10 @@ class CacheService {
   UriCacheInfo playlistArt(Playlist playlist, {bool thumbnail = true}) {
     final id = playlist.coverArt ?? playlist.id;
     return UriCacheInfo(
-        uri: source.coverArtUri(id),
-        cacheKey: playlistArtCacheKey(source.id, playlist.id, thumbnail),
-        cacheManager: imageCache);
+      uri: source.coverArtUri(id),
+      cacheKey: playlistArtCacheKey(source.id, playlist.id, thumbnail),
+      cacheManager: imageCache,
+    );
   }
 
   UriCacheInfo placeholder({bool thumbnail = true}) {

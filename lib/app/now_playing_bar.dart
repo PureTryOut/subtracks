@@ -80,9 +80,11 @@ class _ArtImage extends HookConsumerWidget {
     final imageCache = ref.watch(imageCacheProvider);
     final uri =
         ref.watch(mediaItemProvider.select((e) => e.valueOrNull?.artUri));
-    final cacheKey = ref.watch(mediaItemDataProvider.select(
-      (value) => value?.artCache?.thumbnailArtCacheKey,
-    ));
+    final cacheKey = ref.watch(
+      mediaItemDataProvider.select(
+        (value) => value?.artCache?.thumbnailArtCacheKey,
+      ),
+    );
 
     UriCacheInfo? cache;
     if (uri != null && cacheKey != null) {

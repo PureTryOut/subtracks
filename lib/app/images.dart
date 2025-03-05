@@ -28,10 +28,12 @@ FutureOr<String?> _artistArtCachedUrl(
   required String artistId,
   bool thumbnail = true,
 }) async {
-  final cache = ref.watch(_artistArtCacheInfoProvider(
-    artistId: artistId,
-    thumbnail: thumbnail,
-  ));
+  final cache = ref.watch(
+    _artistArtCacheInfoProvider(
+      artistId: artistId,
+      thumbnail: thumbnail,
+    ),
+  );
   final file = await cache.cacheManager.getFileFromCache(cache.cacheKey);
   return file?.originalUrl;
 }
@@ -43,14 +45,18 @@ FutureOr<UriCacheInfo> _artistArtUriCacheInfo(
   bool thumbnail = true,
 }) async {
   final cache = ref.watch(cacheServiceProvider);
-  final info = ref.watch(_artistArtCacheInfoProvider(
-    artistId: artistId,
-    thumbnail: thumbnail,
-  ));
-  final cachedUrl = await ref.watch(_artistArtCachedUrlProvider(
-    artistId: artistId,
-    thumbnail: thumbnail,
-  ).future);
+  final info = ref.watch(
+    _artistArtCacheInfoProvider(
+      artistId: artistId,
+      thumbnail: thumbnail,
+    ),
+  );
+  final cachedUrl = await ref.watch(
+    _artistArtCachedUrlProvider(
+      artistId: artistId,
+      thumbnail: thumbnail,
+    ).future,
+  );
   final offline = ref.watch(offlineModeProvider);
 
   // already cached, don't try to get the real url again
@@ -105,10 +111,12 @@ class ArtistArtImage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    final cache = ref.watch(_artistArtUriCacheInfoProvider(
-      artistId: artistId,
-      thumbnail: thumbnail,
-    ));
+    final cache = ref.watch(
+      _artistArtUriCacheInfoProvider(
+        artistId: artistId,
+        thumbnail: thumbnail,
+      ),
+    );
 
     // TODO: figure out how to animate this without messing up with boxfit/ratio
     return cache.when(

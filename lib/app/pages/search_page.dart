@@ -76,7 +76,7 @@ class SearchPage extends HookConsumerWidget {
               if (results != null && results.artists.isNotEmpty)
                 _ArtistsSection(artists: results.artists),
               if (results != null)
-                const SliverPadding(padding: EdgeInsets.only(top: 96))
+                const SliverPadding(padding: EdgeInsets.only(top: 96)),
             ],
           ),
         ),
@@ -194,7 +194,8 @@ class _SongsSection extends HookConsumerWidget {
                     startIndex: albumSongs.indexOf(song),
                     query: query,
                     getSongs: (query) => ref.read(
-                        albumSongsListProvider(song.albumId!, query).future),
+                      albumSongsListProvider(song.albumId!, query).future,
+                    ),
                   );
             },
           ),

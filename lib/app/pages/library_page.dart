@@ -34,14 +34,16 @@ class LastLibraryStateService extends _$LastLibraryStateService {
     final db = ref.watch(databaseProvider);
     final tab = await ref.watch(libraryTabPathProvider.future);
 
-    await db.saveLastLibraryState(LastLibraryStateData(
-      id: 1,
-      tab: tab,
-      albumsList: ref.watch(libraryListQueryProvider(0)).query,
-      artistsList: ref.watch(libraryListQueryProvider(1)).query,
-      playlistsList: ref.watch(libraryListQueryProvider(2)).query,
-      songsList: ref.watch(libraryListQueryProvider(3)).query,
-    ));
+    await db.saveLastLibraryState(
+      LastLibraryStateData(
+        id: 1,
+        tab: tab,
+        albumsList: ref.watch(libraryListQueryProvider(0)).query,
+        artistsList: ref.watch(libraryListQueryProvider(1)).query,
+        playlistsList: ref.watch(libraryListQueryProvider(2)).query,
+        songsList: ref.watch(libraryListQueryProvider(3)).query,
+      ),
+    );
   }
 }
 
@@ -180,10 +182,11 @@ class LibraryLists extends _$LibraryLists {
     state = state.replace(
       index,
       state[index].copyWith.query(
-          filters: state[index]
-              .query
-              .filters
-              .removeWhere((f) => f.column == column)),
+            filters: state[index]
+                .query
+                .filters
+                .removeWhere((f) => f.column == column),
+          ),
     );
   }
 
@@ -233,8 +236,10 @@ class _LibraryFilterFab extends HookConsumerWidget {
     final tabsRouter = AutoTabsRouter.of(context);
     final activeIndex =
         useListenableSelector(tabsRouter, () => tabsRouter.activeIndex);
-    final tabHasFilters = ref.watch(libraryListQueryProvider(activeIndex)
-        .select((value) => value.query.filters.isNotEmpty));
+    final tabHasFilters = ref.watch(
+      libraryListQueryProvider(activeIndex)
+          .select((value) => value.query.filters.isNotEmpty),
+    );
 
     List<Widget> dot = [];
     if (tabHasFilters) {
@@ -365,8 +370,9 @@ class _FilterToggleButton extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tabHasFilters = ref.watch(
-        libraryListQueryProvider(tabsRouter.activeIndex)
-            .select((value) => value.query.filters.isNotEmpty));
+      libraryListQueryProvider(tabsRouter.activeIndex)
+          .select((value) => value.query.filters.isNotEmpty),
+    );
 
     return FilledButton(
       onPressed: tabHasFilters
@@ -495,7 +501,7 @@ class ListSortFilterOptions extends HookConsumerWidget {
             ),
             onEdit: _filterOnEdit(column, context, ref),
             onChanged: _filterOnChanged(column, ref),
-          )
+          ),
       ]),
     );
   }

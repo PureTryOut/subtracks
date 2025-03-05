@@ -9,9 +9,10 @@ PagingController<PageKeyType, ItemType>
   required final PageKeyType firstPageKey,
   final int? invisibleItemsThreshold,
   List<Object?>? keys,
-  FutureOr<void> Function(PageKeyType pageKey,
-          PagingController<PageKeyType, ItemType> pagingController)?
-      onPageRequest,
+  FutureOr<void> Function(
+    PageKeyType pageKey,
+    PagingController<PageKeyType, ItemType> pagingController,
+  )? onPageRequest,
 }) {
   final controller = use(
     _PagingControllerHook<PageKeyType, ItemType>(
@@ -21,11 +22,15 @@ PagingController<PageKeyType, ItemType>
     ),
   );
 
-  useEffect(() {
-    listener(PageKeyType pageKey) => onPageRequest?.call(pageKey, controller);
-    controller.addPageRequestListener(listener);
-    return () => controller.removePageRequestListener(listener);
-  }, [onPageRequest]);
+  useEffect(
+    () {
+      FutureOr<void>? listener(PageKeyType pageKey) =>
+          onPageRequest?.call(pageKey, controller);
+      controller.addPageRequestListener(listener);
+      return () => controller.removePageRequestListener(listener);
+    },
+    [onPageRequest],
+  );
 
   return controller;
 }
@@ -51,8 +56,9 @@ class _PagingControllerHookState<PageKeyType, ItemType> extends HookState<
     PagingController<PageKeyType, ItemType>,
     _PagingControllerHook<PageKeyType, ItemType>> {
   late final controller = PagingController<PageKeyType, ItemType>(
-      firstPageKey: hook.firstPageKey,
-      invisibleItemsThreshold: hook.invisibleItemsThreshold);
+    firstPageKey: hook.firstPageKey,
+    invisibleItemsThreshold: hook.invisibleItemsThreshold,
+  );
 
   @override
   PagingController<PageKeyType, ItemType> build(BuildContext context) =>

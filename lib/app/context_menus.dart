@@ -285,7 +285,7 @@ class _Header extends HookConsumerWidget {
                   Text(subtitle!, style: theme.textTheme.titleSmall),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

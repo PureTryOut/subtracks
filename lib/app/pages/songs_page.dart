@@ -44,10 +44,12 @@ class AlbumSongsPage extends HookConsumerWidget {
       return Container();
     }
 
-    final query = useMemoized(() => const ListQuery(
-          page: Pagination(limit: 30),
-          sort: SortBy(column: 'disc, track'),
-        ));
+    final query = useMemoized(
+      () => const ListQuery(
+        page: Pagination(limit: 30),
+        sort: SortBy(column: 'disc, track'),
+      ),
+    );
 
     final getSongs = useCallback(
       (ListQuery query) => ref.read(albumSongsListProvider(id, query).future),
@@ -142,10 +144,12 @@ class PlaylistSongsPage extends HookConsumerWidget {
       return Container();
     }
 
-    final query = useMemoized(() => const ListQuery(
-          page: Pagination(limit: 30),
-          sort: SortBy(column: 'playlist_songs.position'),
-        ));
+    final query = useMemoized(
+      () => const ListQuery(
+        page: Pagination(limit: 30),
+        sort: SortBy(column: 'playlist_songs.position'),
+      ),
+    );
 
     final getSongs = useCallback(
       (ListQuery query) =>
@@ -502,7 +506,7 @@ class _Header extends HookConsumerWidget {
               IconButton(
                 onPressed: onMore,
                 icon: const Icon(Icons.more_horiz),
-              )
+              ),
           ],
         ),
       ],

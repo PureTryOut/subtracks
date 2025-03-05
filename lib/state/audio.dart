@@ -21,18 +21,22 @@ Stream<MediaItem?> mediaItem(MediaItemRef ref) async* {
 
 @Riverpod(keepAlive: true)
 MediaItemData? mediaItemData(MediaItemDataRef ref) {
-  return ref.watch(mediaItemProvider.select(
-    (value) => value.valueOrNull?.data,
-  ));
+  return ref.watch(
+    mediaItemProvider.select(
+      (value) => value.valueOrNull?.data,
+    ),
+  );
 }
 
 @Riverpod(keepAlive: true)
 Stream<Song?> mediaItemSong(MediaItemSongRef ref) {
   final db = ref.watch(databaseProvider);
   final sourceId = ref.watch(sourceIdProvider);
-  final id = ref.watch(mediaItemProvider.select(
-    (value) => value.valueOrNull?.id,
-  ));
+  final id = ref.watch(
+    mediaItemProvider.select(
+      (value) => value.valueOrNull?.id,
+    ),
+  );
 
   return db.songById(sourceId, id ?? '').watchSingleOrNull();
 }
@@ -79,44 +83,56 @@ Stream<Duration> positionStream(PositionStreamRef ref) async* {
 
 @riverpod
 bool playing(PlayingRef ref) {
-  return ref.watch(playbackStateProvider.select(
-    (value) => value.valueOrNull?.playing ?? false,
-  ));
+  return ref.watch(
+    playbackStateProvider.select(
+      (value) => value.valueOrNull?.playing ?? false,
+    ),
+  );
 }
 
 @riverpod
 AudioProcessingState? processingState(ProcessingStateRef ref) {
-  return ref.watch(playbackStateProvider.select(
-    (value) => value.valueOrNull?.processingState,
-  ));
+  return ref.watch(
+    playbackStateProvider.select(
+      (value) => value.valueOrNull?.processingState,
+    ),
+  );
 }
 
 @riverpod
 int position(PositionRef ref) {
-  return ref.watch(positionStreamProvider.select(
-    (value) => value.valueOrNull?.inSeconds ?? 0,
-  ));
+  return ref.watch(
+    positionStreamProvider.select(
+      (value) => value.valueOrNull?.inSeconds ?? 0,
+    ),
+  );
 }
 
 @riverpod
 int duration(DurationRef ref) {
-  return ref.watch(mediaItemProvider.select(
-    (value) => value.valueOrNull?.duration?.inSeconds ?? 0,
-  ));
+  return ref.watch(
+    mediaItemProvider.select(
+      (value) => value.valueOrNull?.duration?.inSeconds ?? 0,
+    ),
+  );
 }
 
 @Riverpod(keepAlive: true)
 AudioServiceShuffleMode? shuffleMode(ShuffleModeRef ref) {
-  return ref.watch(playbackStateProvider.select(
-    (value) => value.valueOrNull?.shuffleMode,
-  ));
+  return ref.watch(
+    playbackStateProvider.select(
+      (value) => value.valueOrNull?.shuffleMode,
+    ),
+  );
 }
 
 @Riverpod(keepAlive: true)
 AudioServiceRepeatMode repeatMode(RepeatModeRef ref) {
-  return ref.watch(playbackStateProvider.select(
-    (value) => value.valueOrNull?.repeatMode ?? AudioServiceRepeatMode.none,
-  ));
+  return ref.watch(
+    playbackStateProvider.select(
+      (value) => value.valueOrNull?.repeatMode ?? AudioServiceRepeatMode.none,
+    ),
+  );
 }
 
 @Riverpod(keepAlive: true)
@@ -128,16 +144,18 @@ class LastAudioStateService extends _$LastAudioStateService {
     final shuffleIndicies = ref.watch(shuffleIndiciesProvider).valueOrNull;
     final repeat = ref.watch(repeatModeProvider);
 
-    await db.saveLastAudioState(LastAudioStateCompanion.insert(
-      id: const Value(1),
-      queueMode: queueMode ?? QueueMode.user,
-      shuffleIndicies: Value(shuffleIndicies?.lock),
-      repeat: {
-        AudioServiceRepeatMode.none: RepeatMode.none,
-        AudioServiceRepeatMode.all: RepeatMode.all,
-        AudioServiceRepeatMode.group: RepeatMode.all,
-        AudioServiceRepeatMode.one: RepeatMode.one,
-      }[repeat]!,
-    ));
+    await db.saveLastAudioState(
+      LastAudioStateCompanion.insert(
+        id: const Value(1),
+        queueMode: queueMode ?? QueueMode.user,
+        shuffleIndicies: Value(shuffleIndicies?.lock),
+        repeat: {
+          AudioServiceRepeatMode.none: RepeatMode.none,
+          AudioServiceRepeatMode.all: RepeatMode.all,
+          AudioServiceRepeatMode.group: RepeatMode.all,
+          AudioServiceRepeatMode.one: RepeatMode.one,
+        }[repeat]!,
+      ),
+    );
   }
 }

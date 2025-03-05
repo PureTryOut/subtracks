@@ -252,17 +252,17 @@ class _Progress extends HookConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(Duration(
-                        seconds: changing.value
-                            ? changeValue.value.toInt()
-                            : position)
-                    .toString()
-                    .substring(2, 7)),
+                Text(
+                  Duration(
+                    seconds:
+                        changing.value ? changeValue.value.toInt() : position,
+                  ).toString().substring(2, 7),
+                ),
                 Text(Duration(seconds: duration).toString().substring(2, 7)),
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }

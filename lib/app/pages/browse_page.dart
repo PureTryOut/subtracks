@@ -40,43 +40,63 @@ class BrowsePage extends HookConsumerWidget {
     final l = AppLocalizations.of(context);
 
     final frequent = ref
-        .watch(albumsCategoryListProvider(const ListQuery(
-          page: Pagination(limit: 20),
-          sort: SortBy(column: 'frequent_rank'),
-          filters: IListConst([
-            FilterWith.isNull(column: 'frequent_rank', invert: true),
-          ]),
-        )))
+        .watch(
+          albumsCategoryListProvider(
+            const ListQuery(
+              page: Pagination(limit: 20),
+              sort: SortBy(column: 'frequent_rank'),
+              filters: IListConst([
+                FilterWith.isNull(column: 'frequent_rank', invert: true),
+              ]),
+            ),
+          ),
+        )
         .valueOrNull;
     final recent = ref
-        .watch(albumsCategoryListProvider(const ListQuery(
-          page: Pagination(limit: 20),
-          sort: SortBy(column: 'recent_rank'),
-          filters: IListConst([
-            FilterWith.isNull(column: 'recent_rank', invert: true),
-          ]),
-        )))
+        .watch(
+          albumsCategoryListProvider(
+            const ListQuery(
+              page: Pagination(limit: 20),
+              sort: SortBy(column: 'recent_rank'),
+              filters: IListConst([
+                FilterWith.isNull(column: 'recent_rank', invert: true),
+              ]),
+            ),
+          ),
+        )
         .valueOrNull;
     final starred = ref
-        .watch(albumsCategoryListProvider(const ListQuery(
-          page: Pagination(limit: 20),
-          sort: SortBy(column: 'starred'),
-          filters: IListConst([
-            FilterWith.isNull(column: 'starred', invert: true),
-          ]),
-        )))
+        .watch(
+          albumsCategoryListProvider(
+            const ListQuery(
+              page: Pagination(limit: 20),
+              sort: SortBy(column: 'starred'),
+              filters: IListConst([
+                FilterWith.isNull(column: 'starred', invert: true),
+              ]),
+            ),
+          ),
+        )
         .valueOrNull;
     final random = ref
-        .watch(albumsCategoryListProvider(const ListQuery(
-          page: Pagination(limit: 20),
-          sort: SortBy(column: 'RANDOM()'),
-        )))
+        .watch(
+          albumsCategoryListProvider(
+            const ListQuery(
+              page: Pagination(limit: 20),
+              sort: SortBy(column: 'RANDOM()'),
+            ),
+          ),
+        )
         .valueOrNull;
 
     final genres = ref
-        .watch(albumGenresProvider(const Pagination(
-          limit: 20,
-        )))
+        .watch(
+          albumGenresProvider(
+            const Pagination(
+              limit: 20,
+            ),
+          ),
+        )
         .valueOrNull;
 
     final songs = ref.watch(songsListProvider(const ListQuery())).valueOrNull;
@@ -161,10 +181,12 @@ class _GenreItem extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final albums = ref
-        .watch(albumsByGenreProvider(
-          genre,
-          const Pagination(limit: 4),
-        ))
+        .watch(
+          albumsByGenreProvider(
+            genre,
+            const Pagination(limit: 4),
+          ),
+        )
         .valueOrNull;
     final cache = ref.watch(cacheServiceProvider);
 

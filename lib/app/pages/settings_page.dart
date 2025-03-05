@@ -198,10 +198,12 @@ class _ShareLogsButton extends StatelessWidget {
                 title: l.settingsAboutChooseLog,
                 current: files.first.path,
                 options: files
-                    .map((e) => MultiChoiceOption.string(
-                          title: p.basename(e.path),
-                          option: e.path,
-                        ))
+                    .map(
+                      (e) => MultiChoiceOption.string(
+                        title: p.basename(e.path),
+                        option: e.path,
+                      ),
+                    )
                     .toIList(),
               ),
             );
@@ -225,9 +227,11 @@ class _MaxBitrateWifi extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bitrate = ref.watch(settingsServiceProvider.select(
-      (value) => value.app.maxBitrateWifi,
-    ));
+    final bitrate = ref.watch(
+      settingsServiceProvider.select(
+        (value) => value.app.maxBitrateWifi,
+      ),
+    );
     final l = AppLocalizations.of(context);
 
     return _MaxBitrateOption(
@@ -245,9 +249,11 @@ class _MaxBitrateMobile extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bitrate = ref.watch(settingsServiceProvider.select(
-      (value) => value.app.maxBitrateMobile,
-    ));
+    final bitrate = ref.watch(
+      settingsServiceProvider.select(
+        (value) => value.app.maxBitrateMobile,
+      ),
+    );
     final l = AppLocalizations.of(context);
 
     return _MaxBitrateOption(
@@ -293,10 +299,12 @@ class _MaxBitrateOption extends HookConsumerWidget {
             title: title,
             current: bitrate,
             options: options
-                .map((opt) => MultiChoiceOption.int(
-                      title: _bitrateText(l, opt),
-                      option: opt,
-                    ))
+                .map(
+                  (opt) => MultiChoiceOption.int(
+                    title: _bitrateText(l, opt),
+                    option: opt,
+                  ),
+                )
                 .toIList(),
           ),
         );
@@ -333,12 +341,14 @@ class _StreamFormat extends HookConsumerWidget {
             title: l.settingsNetworkOptionsStreamFormat,
             current: streamFormat ?? '',
             options: options
-                .map((opt) => MultiChoiceOption.string(
-                      title: opt == ''
-                          ? l.settingsNetworkOptionsStreamFormatServerDefault
-                          : opt,
-                      option: opt,
-                    ))
+                .map(
+                  (opt) => MultiChoiceOption.string(
+                    title: opt == ''
+                        ? l.settingsNetworkOptionsStreamFormatServerDefault
+                        : opt,
+                    option: opt,
+                  ),
+                )
                 .toIList(),
           ),
         );
@@ -379,12 +389,16 @@ class _Sources extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sources = ref.watch(settingsServiceProvider.select(
-      (value) => value.sources,
-    ));
-    final activeSource = ref.watch(settingsServiceProvider.select(
-      (value) => value.activeSource,
-    ));
+    final sources = ref.watch(
+      settingsServiceProvider.select(
+        (value) => value.sources,
+      ),
+    );
+    final activeSource = ref.watch(
+      settingsServiceProvider.select(
+        (value) => value.activeSource,
+      ),
+    );
 
     final l = AppLocalizations.of(context);
 

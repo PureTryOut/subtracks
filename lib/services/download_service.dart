@@ -359,12 +359,14 @@ class DownloadService extends _$DownloadService {
         return;
       }
 
-      await _cacheImage(UriCacheInfo(
-        uri: uri,
-        cacheKey:
-            cache.artistArtCacheInfo(artistId, thumbnail: thumbnail).cacheKey,
-        cacheManager: cache.imageCache,
-      ));
+      await _cacheImage(
+        UriCacheInfo(
+          uri: uri,
+          cacheKey:
+              cache.artistArtCacheInfo(artistId, thumbnail: thumbnail).cacheKey,
+          cacheManager: cache.imageCache,
+        ),
+      );
     } catch (_) {}
   }
 
@@ -518,7 +520,7 @@ class DownloadService extends _$DownloadService {
     );
   }
 
-  void _bindBackgroundIsolate([retry = 0]) {
+  void _bindBackgroundIsolate([int retry = 0]) {
     final isSuccess = IsolateNameServer.registerPortWithName(
       _port.sendPort,
       'downloader_send_port',

@@ -57,17 +57,23 @@ PaletteColor? _rankedWithValue(double value, List<PaletteColor?> colors) {
 ColorTheme _colorTheme(_ColorThemeRef ref, Palette palette) {
   final base = ref.watch(baseThemeProvider);
 
-  final primary = _rankedByLuminance([
-    palette.dominantColor,
-    palette.vibrantColor,
-    palette.mutedColor,
-    palette.darkVibrantColor,
-  ], 0.2);
-  final vibrant = _rankedByLuminance([
-    palette.vibrantColor,
-    palette.darkVibrantColor,
-    palette.dominantColor,
-  ], 0.05);
+  final primary = _rankedByLuminance(
+    [
+      palette.dominantColor,
+      palette.vibrantColor,
+      palette.mutedColor,
+      palette.darkVibrantColor,
+    ],
+    0.2,
+  );
+  final vibrant = _rankedByLuminance(
+    [
+      palette.vibrantColor,
+      palette.darkVibrantColor,
+      palette.dominantColor,
+    ],
+    0.05,
+  );
   final secondary = _rankedByLuminance([
     palette.lightMutedColor,
     palette.mutedColor,
@@ -168,9 +174,11 @@ Future<PaletteGenerator> _generateFromCache(
     height: 32,
     width: 32,
   );
-  final stream = memoryImage.resolve(const ImageConfiguration(
-    devicePixelRatio: 1.0,
-  ));
+  final stream = memoryImage.resolve(
+    const ImageConfiguration(
+      devicePixelRatio: 1.0,
+    ),
+  );
 
   Completer<ui.Image> imageCompleter = Completer<ui.Image>();
   late ImageStreamListener listener;
@@ -226,13 +234,15 @@ FutureOr<Palette> mediaItemPalette(MediaItemPaletteRef ref) async {
     return const Palette();
   }
 
-  return Palette.fromPaletteGenerator(await _generateFromCache(
-    UriCacheInfo(
-      uri: item.artUri!,
-      cacheKey: itemData.artCache!.thumbnailArtCacheKey,
-      cacheManager: imageCache,
+  return Palette.fromPaletteGenerator(
+    await _generateFromCache(
+      UriCacheInfo(
+        uri: item.artUri!,
+        cacheKey: itemData.artCache!.thumbnailArtCacheKey,
+        cacheManager: imageCache,
+      ),
     ),
-  ));
+  );
 }
 
 @riverpod

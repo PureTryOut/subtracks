@@ -23,11 +23,13 @@ class MyApp extends HookConsumerWidget {
         textDirection: TextDirection.ltr,
         child: Container(
           color: Colors.red[900],
-          child: Column(children: [
-            const SizedBox(height: 100),
-            Text(e.toString()),
-            Text(s.toString()),
-          ]),
+          child: Column(
+            children: [
+              const SizedBox(height: 100),
+              Text(e.toString()),
+              Text(s.toString()),
+            ],
+          ),
         ),
       ),
       loading: () => const CircularProgressIndicator(),
@@ -50,9 +52,11 @@ class LastPath extends _$LastPath {
     if (lastBottomNav == null || lastLibrary == null) return;
 
     // TODO: replace this with a proper first-time setup flow
-    final hasActiveSource = ref.read(settingsServiceProvider.select(
-      (value) => value.activeSource != null,
-    ));
+    final hasActiveSource = ref.read(
+      settingsServiceProvider.select(
+        (value) => value.activeSource != null,
+      ),
+    );
     if (!hasActiveSource) return;
 
     state = lastBottomNav.tab == 'library'

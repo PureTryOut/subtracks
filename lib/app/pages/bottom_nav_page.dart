@@ -172,9 +172,11 @@ class _BottomNavBar extends HookConsumerWidget {
           selectedIndex: tabsRouter.activeIndex,
           onDestinationSelected: (index) {
             // TODO: replace this with a proper first-time setup flow
-            final hasActiveSource = ref.read(settingsServiceProvider.select(
-              (value) => value.activeSource != null,
-            ));
+            final hasActiveSource = ref.read(
+              settingsServiceProvider.select(
+                (value) => value.activeSource != null,
+              ),
+            );
 
             if (!hasActiveSource) {
               tabsRouter.setActiveIndex(3);
@@ -188,16 +190,19 @@ class _BottomNavBar extends HookConsumerWidget {
               label: 'Library',
             ),
             NavigationDestination(
-              icon: Builder(builder: (context) {
-                return SvgPicture.asset(
-                  'assets/tag_FILL0_wght400_GRAD0_opsz24.svg',
-                  colorFilter: ColorFilter.mode(
-                    iconTheme.color!.withValues(alpha: iconTheme.opacity ?? 1),
-                    BlendMode.srcIn,
-                  ),
-                  height: 28,
-                );
-              }),
+              icon: Builder(
+                builder: (context) {
+                  return SvgPicture.asset(
+                    'assets/tag_FILL0_wght400_GRAD0_opsz24.svg',
+                    colorFilter: ColorFilter.mode(
+                      iconTheme.color!
+                          .withValues(alpha: iconTheme.opacity ?? 1),
+                      BlendMode.srcIn,
+                    ),
+                    height: 28,
+                  );
+                },
+              ),
               label: 'Browse',
             ),
             const NavigationDestination(

@@ -43,7 +43,7 @@ class ArtistPage extends HookConsumerWidget {
                       FilterWith.equals(
                         column: 'artist_id',
                         value: artist.valueOrNull!.id,
-                      )
+                      ),
                     ]),
                   ),
                   getSongs: (query) => ref
@@ -88,9 +88,11 @@ class ArtistPage extends HookConsumerWidget {
                     return AlbumCard(
                       album: album,
                       subtitle: AlbumSubtitle.year,
-                      onTap: () => context.navigateTo(AlbumSongsRoute(
-                        id: album.id,
-                      )),
+                      onTap: () => context.navigateTo(
+                        AlbumSongsRoute(
+                          id: album.id,
+                        ),
+                      ),
                     );
                   },
                 ),

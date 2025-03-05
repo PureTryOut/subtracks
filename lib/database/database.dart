@@ -95,7 +95,9 @@ class SubtracksDatabase extends _$SubtracksDatabase {
   }
 
   MultiSelectable<Playlist> playlistsListDownloaded(
-      int sourceId, ListQuery opt) {
+    int sourceId,
+    ListQuery opt,
+  ) {
     return filterPlaylistsDownloaded(
       (_, __, ___) => _filterPredicate('playlists', sourceId, opt),
       (_, __, ___) => _filterOrderBy(opt),
@@ -139,8 +141,10 @@ class SubtracksDatabase extends _$SubtracksDatabase {
   MultiSelectable<Song> albumSongsList(SourceId sid, ListQuery opt) {
     return listQuery(
       select(songs)
-        ..where((tbl) =>
-            tbl.sourceId.equals(sid.sourceId) & tbl.albumId.equals(sid.id)),
+        ..where(
+          (tbl) =>
+              tbl.sourceId.equals(sid.sourceId) & tbl.albumId.equals(sid.id),
+        ),
       opt,
     );
   }
@@ -163,8 +167,10 @@ class SubtracksDatabase extends _$SubtracksDatabase {
           useColumns: false,
         ),
       ])
-        ..where(playlistSongs.sourceId.equals(sid.sourceId) &
-            playlistSongs.playlistId.equals(sid.id)),
+        ..where(
+          playlistSongs.sourceId.equals(sid.sourceId) &
+              playlistSongs.playlistId.equals(sid.id),
+        ),
       opt,
     ).map((row) => row.readTable(songs));
   }
@@ -191,7 +197,8 @@ class SubtracksDatabase extends _$SubtracksDatabase {
       for (var slice in diff.slices(kSqliteMaxVariableNumber)) {
         await (delete(artists)
               ..where(
-                  (tbl) => tbl.sourceId.equals(sourceId) & tbl.id.isIn(slice)))
+                (tbl) => tbl.sourceId.equals(sourceId) & tbl.id.isIn(slice),
+              ))
             .go();
       }
     });
@@ -219,7 +226,8 @@ class SubtracksDatabase extends _$SubtracksDatabase {
       for (var slice in diff.slices(kSqliteMaxVariableNumber)) {
         await (delete(albums)
               ..where(
-                  (tbl) => tbl.sourceId.equals(sourceId) & tbl.id.isIn(slice)))
+                (tbl) => tbl.sourceId.equals(sourceId) & tbl.id.isIn(slice),
+              ))
             .go();
       }
     });
@@ -263,11 +271,14 @@ class SubtracksDatabase extends _$SubtracksDatabase {
       for (var slice in diff.slices(kSqliteMaxVariableNumber)) {
         await (delete(playlists)
               ..where(
-                  (tbl) => tbl.sourceId.equals(sourceId) & tbl.id.isIn(slice)))
+                (tbl) => tbl.sourceId.equals(sourceId) & tbl.id.isIn(slice),
+              ))
             .go();
         await (delete(playlistSongs)
-              ..where((tbl) =>
-                  tbl.sourceId.equals(sourceId) & tbl.playlistId.isIn(slice)))
+              ..where(
+                (tbl) =>
+                    tbl.sourceId.equals(sourceId) & tbl.playlistId.isIn(slice),
+              ))
             .go();
       }
     });
@@ -312,7 +323,8 @@ class SubtracksDatabase extends _$SubtracksDatabase {
       for (var slice in diff.slices(kSqliteMaxVariableNumber)) {
         await (delete(songs)
               ..where(
-                  (tbl) => tbl.sourceId.equals(sourceId) & tbl.id.isIn(slice)))
+                (tbl) => tbl.sourceId.equals(sourceId) & tbl.id.isIn(slice),
+              ))
             .go();
         await (delete(playlistSongs)
               ..where(
@@ -473,7 +485,7 @@ SimpleSelectStatement<T, R> listQuery<T extends HasResultSet, R>(
       (t) => OrderingTerm(
             expression: CustomExpression(opt.sort!.column),
             mode: mode,
-          )
+          ),
     ]);
   }
 
@@ -500,7 +512,7 @@ JoinedSelectStatement<T, R> listQueryJoined<T extends HasResultSet, R>(
       OrderingTerm(
         expression: CustomExpression(opt.sort!.column),
         mode: mode,
-      )
+      ),
     ]);
   }
 
