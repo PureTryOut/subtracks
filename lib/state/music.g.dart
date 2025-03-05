@@ -1879,5 +1879,132 @@ class _SongsByGenreCountProviderElement
   @override
   String get genre => (origin as SongsByGenreCountProvider).genre;
 }
+
+String _$songsListHash() => r'4b037f06bb871a60a805fcb2e5769be3199b3e94';
+
+/// See also [songsList].
+@ProviderFor(songsList)
+const songsListProvider = SongsListFamily();
+
+/// See also [songsList].
+class SongsListFamily extends Family<AsyncValue<IList<Song>>> {
+  /// See also [songsList].
+  const SongsListFamily();
+
+  /// See also [songsList].
+  SongsListProvider call(
+    ListQuery opt,
+  ) {
+    return SongsListProvider(
+      opt,
+    );
+  }
+
+  @override
+  SongsListProvider getProviderOverride(
+    covariant SongsListProvider provider,
+  ) {
+    return call(
+      provider.opt,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'songsListProvider';
+}
+
+/// See also [songsList].
+class SongsListProvider extends AutoDisposeStreamProvider<IList<Song>> {
+  /// See also [songsList].
+  SongsListProvider(
+    ListQuery opt,
+  ) : this._internal(
+          (ref) => songsList(
+            ref as SongsListRef,
+            opt,
+          ),
+          from: songsListProvider,
+          name: r'songsListProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$songsListHash,
+          dependencies: SongsListFamily._dependencies,
+          allTransitiveDependencies: SongsListFamily._allTransitiveDependencies,
+          opt: opt,
+        );
+
+  SongsListProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.opt,
+  }) : super.internal();
+
+  final ListQuery opt;
+
+  @override
+  Override overrideWith(
+    Stream<IList<Song>> Function(SongsListRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: SongsListProvider._internal(
+        (ref) => create(ref as SongsListRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        opt: opt,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<IList<Song>> createElement() {
+    return _SongsListProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SongsListProvider && other.opt == opt;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, opt.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin SongsListRef on AutoDisposeStreamProviderRef<IList<Song>> {
+  /// The parameter `opt` of this provider.
+  ListQuery get opt;
+}
+
+class _SongsListProviderElement
+    extends AutoDisposeStreamProviderElement<IList<Song>> with SongsListRef {
+  _SongsListProviderElement(super.provider);
+
+  @override
+  ListQuery get opt => (origin as SongsListProvider).opt;
+}
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
