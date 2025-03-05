@@ -15,12 +15,12 @@ import '../now_playing_bar.dart';
 part 'bottom_nav_page.g.dart';
 
 @Riverpod(keepAlive: true)
-TabObserver bottomTabObserver(BottomTabObserverRef ref) {
+TabObserver bottomTabObserver(Ref ref) {
   return TabObserver();
 }
 
 @Riverpod(keepAlive: true)
-Stream<String> bottomTabPath(BottomTabPathRef ref) async* {
+Stream<String> bottomTabPath(Ref ref) async* {
   final observer = ref.watch(bottomTabObserverProvider);
   await for (var tab in observer.path) {
     yield tab;
@@ -41,6 +41,7 @@ class LastBottomNavStateService extends _$LastBottomNavStateService {
   }
 }
 
+@RoutePage()
 class BottomNavTabsPage extends HookConsumerWidget {
   const BottomNavTabsPage({super.key});
 
@@ -56,12 +57,12 @@ class BottomNavTabsPage extends HookConsumerWidget {
       inheritNavigatorObservers: false,
       navigatorObservers: () => [observer],
       routes: const [
-        LibraryRouter(),
-        BrowseRouter(),
-        SearchRouter(),
-        SettingsRouter(),
+        LibraryAlbumsRoute(),
+        BrowseRoute(),
+        SearchRoute(),
+        SettingsRoute(),
       ],
-      builder: (context, child, animation) {
+      builder: (context, child) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.light.copyWith(
             systemNavigationBarColor: ElevationOverlay.applySurfaceTint(
@@ -75,10 +76,7 @@ class BottomNavTabsPage extends HookConsumerWidget {
             body: Stack(
               alignment: AlignmentDirectional.bottomStart,
               children: [
-                FadeTransition(
-                  opacity: animation,
-                  child: child,
-                ),
+                child,
                 const OfflineIndicator(),
               ],
             ),
@@ -93,9 +91,7 @@ class BottomNavTabsPage extends HookConsumerWidget {
 }
 
 class OfflineIndicator extends HookConsumerWidget {
-  const OfflineIndicator({
-    super.key,
-  });
+  const OfflineIndicator({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

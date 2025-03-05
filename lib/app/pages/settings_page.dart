@@ -8,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:share_plus/share_plus.dart';
+import 'package:subtracks/app/app_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../log.dart';
@@ -15,11 +16,11 @@ import '../../models/support.dart';
 import '../../services/settings_service.dart';
 import '../../state/init.dart';
 import '../../state/settings.dart';
-import '../app_router.dart';
 import '../dialogs.dart';
 
 const kHorizontalPadding = 16.0;
 
+@RoutePage()
 class SettingsPage extends HookConsumerWidget {
   const SettingsPage({super.key});
 

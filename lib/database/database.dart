@@ -5,6 +5,7 @@ import 'package:drift/drift.dart';
 import 'package:drift/isolate.dart';
 import 'package:drift/native.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -456,7 +457,7 @@ LazyDatabase _openConnection() {
 }
 
 @Riverpod(keepAlive: true)
-SubtracksDatabase database(DatabaseRef ref) {
+SubtracksDatabase database(Ref ref) {
   return SubtracksDatabase();
 }
 

@@ -17,6 +17,7 @@ import '../buttons.dart';
 import '../images.dart';
 import '../items.dart';
 
+@RoutePage()
 class ArtistPage extends HookConsumerWidget {
   final String id;
 

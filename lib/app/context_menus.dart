@@ -352,10 +352,10 @@ class _ViewArtist extends HookConsumerWidget {
       onTap: () async {
         final router = context.router;
 
-        await router.pop();
+        router.pop();
         if (router.currentPath == '/now-playing') {
-          await router.pop();
-          await router.navigate(const LibraryRouter());
+          router.pop();
+          await router.navigate(const LibraryAlbumsRoute());
         }
         await router.navigate(ArtistRoute(id: id));
       },
@@ -379,10 +379,10 @@ class _ViewAlbum extends HookConsumerWidget {
       onTap: () async {
         final router = context.router;
 
-        await router.pop();
+        router.pop();
         if (router.currentPath == '/now-playing') {
-          await router.pop();
-          await router.navigate(const LibraryRouter());
+          router.pop();
+          await router.navigate(const LibraryAlbumsRoute());
         }
         await router.navigate(AlbumSongsRoute(id: id));
       },

@@ -24,122 +24,120 @@ part 'app_router.gr.dart';
 const kCustomTransitionBuilder = TransitionsBuilders.slideRightWithFade;
 const kCustomTransitionDuration = 160;
 
-const itemRoutes = [
+final itemRoutes = [
   CustomRoute(
     path: 'album/:id',
-    page: AlbumSongsPage,
+    page: AlbumSongsRoute.page,
     transitionsBuilder: kCustomTransitionBuilder,
-    durationInMilliseconds: kCustomTransitionDuration,
-    reverseDurationInMilliseconds: kCustomTransitionDuration,
+    duration: const Duration(milliseconds: kCustomTransitionDuration),
+    reverseDuration: const Duration(milliseconds: kCustomTransitionDuration),
   ),
   CustomRoute(
     path: 'artist/:id',
-    page: ArtistPage,
+    page: ArtistRoute.page,
     transitionsBuilder: kCustomTransitionBuilder,
-    durationInMilliseconds: kCustomTransitionDuration,
-    reverseDurationInMilliseconds: kCustomTransitionDuration,
+    duration: const Duration(milliseconds: kCustomTransitionDuration),
+    reverseDuration: const Duration(milliseconds: kCustomTransitionDuration),
   ),
   CustomRoute(
     path: 'playlist/:id',
-    page: PlaylistSongsPage,
+    page: PlaylistSongsRoute.page,
     transitionsBuilder: kCustomTransitionBuilder,
-    durationInMilliseconds: kCustomTransitionDuration,
-    reverseDurationInMilliseconds: kCustomTransitionDuration,
+    duration: const Duration(milliseconds: kCustomTransitionDuration),
+    reverseDuration: const Duration(milliseconds: kCustomTransitionDuration),
   ),
   CustomRoute(
     path: 'genre/:genre',
-    page: GenreSongsPage,
+    page: GenreSongsRoute.page,
     transitionsBuilder: kCustomTransitionBuilder,
-    durationInMilliseconds: kCustomTransitionDuration,
-    reverseDurationInMilliseconds: kCustomTransitionDuration,
+    duration: const Duration(milliseconds: kCustomTransitionDuration),
+    reverseDuration: const Duration(milliseconds: kCustomTransitionDuration),
   ),
 ];
 
-class EmptyRouterPage extends AutoRouter {
-  const EmptyRouterPage({Key? key})
-      : super(
-          key: key,
-          inheritNavigatorObservers: false,
-        );
+@RoutePage()
+class EmptyRouterPage extends StatelessWidget {
+  const EmptyRouterPage({super.key});
+
+  @override
+  Widget build(BuildContext context) => const AutoRouter();
 }
 
-@MaterialAutoRouter(
-  replaceInRouteName: 'Page,Route',
-  routes: <AutoRoute>[
-    AutoRoute(
-      path: '/',
-      name: 'RootRouter',
-      page: EmptyRouterPage,
-      children: [
+@AutoRouterConfig(replaceInRouteName: 'Page,Route')
+class AppRouter extends RootStackRouter {
+  @override
+  RouteType get defaultRouteType => const RouteType.material();
+
+  @override
+  List<AutoRoute> get routes => [
         AutoRoute(
-          path: '',
-          page: BottomNavTabsPage,
+          path: '/',
+          page: EmptyRouterRoute.page,
           children: [
             AutoRoute(
-              path: 'library',
-              name: 'LibraryRouter',
-              page: EmptyRouterPage,
+              path: '',
+              page: BottomNavTabsRoute.page,
               children: [
                 AutoRoute(
-                  path: '',
-                  page: LibraryTabsPage,
+                  path: 'library',
+                  page: LibraryTabsRoute.page,
                   children: [
-                    AutoRoute(path: 'albums', page: LibraryAlbumsPage),
-                    AutoRoute(path: 'artists', page: LibraryArtistsPage),
-                    AutoRoute(path: 'playlists', page: LibraryPlaylistsPage),
-                    AutoRoute(path: 'songs', page: LibrarySongsPage),
+                    AutoRoute(
+                      path: 'albums',
+                      page: LibraryAlbumsRoute.page,
+                    ),
+                    AutoRoute(
+                      path: 'artists',
+                      page: LibraryArtistsRoute.page,
+                    ),
+                    AutoRoute(
+                      path: 'playlists',
+                      page: LibraryPlaylistsRoute.page,
+                    ),
+                    AutoRoute(
+                      path: 'songs',
+                      page: LibrarySongsRoute.page,
+                    ),
                   ],
                 ),
-                ...itemRoutes,
-              ],
-            ),
-            AutoRoute(
-              path: 'browse',
-              name: 'BrowseRouter',
-              page: EmptyRouterPage,
-              children: [
-                AutoRoute(path: '', page: BrowsePage),
-                ...itemRoutes,
-              ],
-            ),
-            AutoRoute(
-              path: 'search',
-              name: 'SearchRouter',
-              page: EmptyRouterPage,
-              children: [
-                AutoRoute(path: '', page: SearchPage),
-                ...itemRoutes,
-              ],
-            ),
-            AutoRoute(
-              path: 'settings',
-              name: 'SettingsRouter',
-              page: EmptyRouterPage,
-              children: [
-                AutoRoute(path: '', page: SettingsPage),
-                CustomRoute(
-                  path: 'source/:id',
-                  page: SourcePage,
-                  transitionsBuilder: kCustomTransitionBuilder,
-                  durationInMilliseconds: kCustomTransitionDuration,
-                  reverseDurationInMilliseconds: kCustomTransitionDuration,
+                AutoRoute(
+                  path: 'browse',
+                  page: EmptyRouterRoute.page,
+                  children: [
+                    AutoRoute(
+                      path: '',
+                      page: BrowseRoute.page,
+                    ),
+                    ...itemRoutes,
+                  ],
                 ),
+                AutoRoute(
+                  path: 'search',
+                  page: SearchRoute.page,
+                ),
+                AutoRoute(path: 'settings', page: SettingsRoute.page),
+                ...itemRoutes,
               ],
+            ),
+            CustomRoute(
+              path: 'settings/source/:id',
+              page: SourceRoute.page,
+              transitionsBuilder: kCustomTransitionBuilder,
+              duration: const Duration(milliseconds: kCustomTransitionDuration),
+              reverseDuration:
+                  const Duration(milliseconds: kCustomTransitionDuration),
             ),
           ],
         ),
-      ],
-    ),
-    CustomRoute(
-      path: '/now-playing',
-      page: NowPlayingPage,
-      transitionsBuilder: TransitionsBuilders.slideBottom,
-      durationInMilliseconds: 200,
-      reverseDurationInMilliseconds: 160,
-    ),
-  ],
-)
-class AppRouter extends _$AppRouter {}
+        CustomRoute(
+          path: '/now-playing',
+          page: NowPlayingRoute.page,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          duration: const Duration(milliseconds: 200),
+          reverseDuration: const Duration(milliseconds: 160),
+        ),
+      ];
+}
 
 class TabObserver extends AutoRouterObserver {
   final StreamController<String> _controller = StreamController.broadcast();

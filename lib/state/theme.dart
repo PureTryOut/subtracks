@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:worker_manager/worker_manager.dart';
@@ -54,7 +55,7 @@ PaletteColor? _rankedWithValue(double value, List<PaletteColor?> colors) {
 }
 
 @riverpod
-ColorTheme _colorTheme(_ColorThemeRef ref, Palette palette) {
+ColorTheme _colorTheme(Ref ref, Palette palette) {
   final base = ref.watch(baseThemeProvider);
 
   final primary = _rankedByLuminance(
@@ -120,7 +121,7 @@ ColorTheme _colorTheme(_ColorThemeRef ref, Palette palette) {
 }
 
 @riverpod
-ColorTheme baseTheme(BaseThemeRef ref) {
+ColorTheme baseTheme(Ref ref) {
   final theme = ThemeData(
     useMaterial3: true,
     colorSchemeSeed: Colors.purple[800],
@@ -151,7 +152,7 @@ ColorTheme baseTheme(BaseThemeRef ref) {
 
 @riverpod
 FutureOr<Palette> albumArtPalette(
-  AlbumArtPaletteRef ref,
+  Ref ref,
   String id,
 ) async {
   final album = await ref.watch(albumProvider(id).future);
@@ -214,7 +215,7 @@ Future<PaletteGenerator> _computePalette(
 
 @riverpod
 FutureOr<Palette> playlistArtPalette(
-  PlaylistArtPaletteRef ref,
+  Ref ref,
   String id,
 ) async {
   final playlist = await ref.watch(playlistProvider(id).future);
@@ -225,7 +226,7 @@ FutureOr<Palette> playlistArtPalette(
 }
 
 @riverpod
-FutureOr<Palette> mediaItemPalette(MediaItemPaletteRef ref) async {
+FutureOr<Palette> mediaItemPalette(Ref ref) async {
   final item = ref.watch(mediaItemProvider).valueOrNull;
   final itemData = ref.watch(mediaItemDataProvider);
   final imageCache = ref.watch(imageCacheProvider);
@@ -246,20 +247,20 @@ FutureOr<Palette> mediaItemPalette(MediaItemPaletteRef ref) async {
 }
 
 @riverpod
-FutureOr<ColorTheme> mediaItemTheme(MediaItemThemeRef ref) async {
+FutureOr<ColorTheme> mediaItemTheme(Ref ref) async {
   final palette = await ref.watch(mediaItemPaletteProvider.future);
   return ref.watch(_colorThemeProvider(palette));
 }
 
 @riverpod
-FutureOr<ColorTheme> albumArtTheme(AlbumArtThemeRef ref, String id) async {
+FutureOr<ColorTheme> albumArtTheme(Ref ref, String id) async {
   final palette = await ref.watch(albumArtPaletteProvider(id).future);
   return ref.watch(_colorThemeProvider(palette));
 }
 
 @riverpod
 FutureOr<ColorTheme> playlistArtTheme(
-  PlaylistArtThemeRef ref,
+  Ref ref,
   String id,
 ) async {
   final palette = await ref.watch(playlistArtPaletteProvider(id).future);

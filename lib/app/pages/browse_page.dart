@@ -23,7 +23,7 @@ part 'browse_page.g.dart';
 
 @riverpod
 Stream<List<Album>> albumsCategoryList(
-  AlbumsCategoryListRef ref,
+  Ref ref,
   ListQuery opt,
 ) {
   final db = ref.watch(databaseProvider);
@@ -32,6 +32,7 @@ Stream<List<Album>> albumsCategoryList(
   return db.albumsList(sourceId, opt).watch();
 }
 
+@RoutePage()
 class BrowsePage extends HookConsumerWidget {
   const BrowsePage({super.key});
 

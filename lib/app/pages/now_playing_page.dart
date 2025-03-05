@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +19,7 @@ import '../gradient.dart';
 import '../images.dart';
 import '../now_playing_bar.dart';
 
+@RoutePage()
 class NowPlayingPage extends HookConsumerWidget {
   const NowPlayingPage({super.key});
 

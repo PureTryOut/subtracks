@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../http/client.dart';
@@ -10,7 +11,7 @@ import '../sources/subsonic/source.dart';
 part 'settings.g.dart';
 
 @Riverpod(keepAlive: true)
-MusicSource musicSource(MusicSourceRef ref) {
+MusicSource musicSource(Ref ref) {
   final settings = ref.watch(
     settingsServiceProvider.select(
       (value) => value.activeSource,
@@ -36,22 +37,24 @@ MusicSource musicSource(MusicSourceRef ref) {
 }
 
 @Riverpod(keepAlive: true)
-Stream<NetworkMode> networkMode(NetworkModeRef ref) async* {
+Stream<NetworkMode> networkMode(Ref ref) async* {
   await for (var state in Connectivity().onConnectivityChanged) {
-    switch (state) {
-      case ConnectivityResult.wifi:
-      case ConnectivityResult.ethernet:
-        yield NetworkMode.wifi;
-        break;
-      default:
-        yield NetworkMode.mobile;
-        break;
+    for (var connectivityResult in state) {
+      switch (connectivityResult) {
+        case ConnectivityResult.wifi:
+        case ConnectivityResult.ethernet:
+          yield NetworkMode.wifi;
+          break;
+        default:
+          yield NetworkMode.mobile;
+          break;
+      }
     }
   }
 }
 
 @Riverpod(keepAlive: true)
-Future<int> maxBitrate(MaxBitrateRef ref) async {
+Future<int> maxBitrate(Ref ref) async {
   final settings = ref.watch(
     settingsServiceProvider.select(
       (value) => value.app,
@@ -65,7 +68,7 @@ Future<int> maxBitrate(MaxBitrateRef ref) async {
 }
 
 @Riverpod(keepAlive: true)
-int sourceId(SourceIdRef ref) {
+int sourceId(Ref ref) {
   return ref.watch(musicSourceProvider.select((value) => value.id));
 }
 

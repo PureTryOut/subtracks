@@ -1,4 +1,5 @@
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../database/database.dart';
@@ -10,7 +11,7 @@ import 'settings.dart';
 part 'music.g.dart';
 
 @riverpod
-Stream<Artist> artist(ArtistRef ref, String id) {
+Stream<Artist> artist(Ref ref, String id) {
   final db = ref.watch(databaseProvider);
   final sourceId = ref.watch(sourceIdProvider);
 
@@ -18,7 +19,7 @@ Stream<Artist> artist(ArtistRef ref, String id) {
 }
 
 @riverpod
-Stream<Album> album(AlbumRef ref, String id) {
+Stream<Album> album(Ref ref, String id) {
   final db = ref.watch(databaseProvider);
   final sourceId = ref.watch(sourceIdProvider);
 
@@ -27,7 +28,7 @@ Stream<Album> album(AlbumRef ref, String id) {
 
 @riverpod
 Stream<ListDownloadStatus> albumDownloadStatus(
-  AlbumDownloadStatusRef ref,
+  Ref ref,
   String id,
 ) {
   final db = ref.watch(databaseProvider);
@@ -38,7 +39,7 @@ Stream<ListDownloadStatus> albumDownloadStatus(
 
 @riverpod
 Stream<ListDownloadStatus> playlistDownloadStatus(
-  PlaylistDownloadStatusRef ref,
+  Ref ref,
   String id,
 ) {
   final db = ref.watch(databaseProvider);
@@ -48,7 +49,7 @@ Stream<ListDownloadStatus> playlistDownloadStatus(
 }
 
 @riverpod
-Stream<Song> song(SongRef ref, String id) {
+Stream<Song> song(Ref ref, String id) {
   final db = ref.watch(databaseProvider);
   final sourceId = ref.watch(sourceIdProvider);
 
@@ -57,7 +58,7 @@ Stream<Song> song(SongRef ref, String id) {
 
 @riverpod
 Future<List<Song>> albumSongsList(
-  AlbumSongsListRef ref,
+  Ref ref,
   String id,
   ListQuery opt,
 ) {
@@ -69,7 +70,7 @@ Future<List<Song>> albumSongsList(
 
 @riverpod
 Future<List<Song>> songsByAlbumList(
-  SongsByAlbumListRef ref,
+  Ref ref,
   ListQuery opt,
 ) {
   final db = ref.watch(databaseProvider);
@@ -79,7 +80,7 @@ Future<List<Song>> songsByAlbumList(
 }
 
 @riverpod
-Stream<Playlist> playlist(PlaylistRef ref, String id) {
+Stream<Playlist> playlist(Ref ref, String id) {
   final db = ref.watch(databaseProvider);
   final sourceId = ref.watch(sourceIdProvider);
 
@@ -88,7 +89,7 @@ Stream<Playlist> playlist(PlaylistRef ref, String id) {
 
 @riverpod
 Future<List<Song>> playlistSongsList(
-  PlaylistSongsListRef ref,
+  Ref ref,
   String id,
   ListQuery opt,
 ) {
@@ -99,7 +100,7 @@ Future<List<Song>> playlistSongsList(
 }
 
 @riverpod
-Future<List<Album>> albumsInIds(AlbumsInIdsRef ref, IList<String> ids) {
+Future<List<Album>> albumsInIds(Ref ref, IList<String> ids) {
   final db = ref.watch(databaseProvider);
   final sourceId = ref.watch(sourceIdProvider);
 
@@ -107,7 +108,7 @@ Future<List<Album>> albumsInIds(AlbumsInIdsRef ref, IList<String> ids) {
 }
 
 @riverpod
-Stream<IList<Album>> albumsByArtistId(AlbumsByArtistIdRef ref, String id) {
+Stream<IList<Album>> albumsByArtistId(Ref ref, String id) {
   final db = ref.watch(databaseProvider);
   final sourceId = ref.watch(sourceIdProvider);
 
@@ -118,7 +119,7 @@ Stream<IList<Album>> albumsByArtistId(AlbumsByArtistIdRef ref, String id) {
 }
 
 @riverpod
-Stream<IList<String>> albumGenres(AlbumGenresRef ref, Pagination page) {
+Stream<IList<String>> albumGenres(Ref ref, Pagination page) {
   final db = ref.watch(databaseProvider);
   final sourceId = ref.watch(sourceIdProvider);
 
@@ -130,7 +131,7 @@ Stream<IList<String>> albumGenres(AlbumGenresRef ref, Pagination page) {
 
 @riverpod
 Stream<IList<Album>> albumsByGenre(
-  AlbumsByGenreRef ref,
+  Ref ref,
   String genre,
   Pagination page,
 ) {
@@ -144,7 +145,7 @@ Stream<IList<Album>> albumsByGenre(
 }
 
 @riverpod
-Stream<int> songsByGenreCount(SongsByGenreCountRef ref, String genre) {
+Stream<int> songsByGenreCount(Ref ref, String genre) {
   final db = ref.watch(databaseProvider);
   final sourceId = ref.watch(sourceIdProvider);
 
@@ -152,7 +153,7 @@ Stream<int> songsByGenreCount(SongsByGenreCountRef ref, String genre) {
 }
 
 @riverpod
-Stream<IList<Song>> songsList(SongsListRef ref, ListQuery opt) {
+Stream<IList<Song>> songsList(Ref ref, ListQuery opt) {
   final db = ref.watch(databaseProvider);
   final sourceId = ref.watch(sourceIdProvider);
 

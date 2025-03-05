@@ -2,6 +2,7 @@
 
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_cache_manager/src/storage/file_system/file_system_io.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -24,7 +25,7 @@ CacheManager _openImageCache(BaseClient httpClient) {
 }
 
 @Riverpod(keepAlive: true)
-CacheManager imageCache(ImageCacheRef ref) {
+CacheManager imageCache(Ref ref) {
   final http = ref.watch(httpClientProvider);
   return _openImageCache(http);
 }

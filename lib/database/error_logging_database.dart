@@ -71,6 +71,12 @@ class ErrorLoggingDatabase implements QueryExecutor {
   Future<int> runUpdate(String statement, List<Object?> args) {
     return _handleErrors(() => inner.runUpdate(statement, args));
   }
+
+  @override
+  QueryExecutor beginExclusive() {
+    // TODO: implement beginExclusive
+    throw UnimplementedError();
+  }
 }
 
 class _ErrorLoggingTransactionExecutor extends ErrorLoggingDatabase

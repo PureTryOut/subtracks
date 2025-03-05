@@ -14,6 +14,7 @@ import '../../services/settings_service.dart';
 import '../items.dart';
 import '../snackbars.dart';
 
+@RoutePage()
 class SourcePage extends HookConsumerWidget {
   final int? id;
 

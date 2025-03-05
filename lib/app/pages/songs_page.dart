@@ -25,6 +25,7 @@ import '../images.dart';
 import '../items.dart';
 import '../lists.dart';
 
+@RoutePage()
 class AlbumSongsPage extends HookConsumerWidget {
   final String id;
 
@@ -126,6 +127,7 @@ class _AlbumHeader extends HookConsumerWidget {
   }
 }
 
+@RoutePage()
 class PlaylistSongsPage extends HookConsumerWidget {
   final String id;
 
@@ -231,6 +233,7 @@ class _PlaylistHeader extends HookConsumerWidget {
   }
 }
 
+@RoutePage()
 class GenreSongsPage extends HookConsumerWidget {
   final String genre;
 

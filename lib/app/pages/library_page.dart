@@ -15,12 +15,12 @@ import '../context_menus.dart';
 part 'library_page.g.dart';
 
 @Riverpod(keepAlive: true)
-TabObserver libraryTabObserver(LibraryTabObserverRef ref) {
+TabObserver libraryTabObserver(Ref ref) {
   return TabObserver();
 }
 
 @Riverpod(keepAlive: true)
-Stream<String> libraryTabPath(LibraryTabPathRef ref) async* {
+Stream<String> libraryTabPath(Ref ref) async* {
   final observer = ref.watch(libraryTabObserverProvider);
   await for (var tab in observer.path) {
     yield tab;
@@ -196,10 +196,11 @@ class LibraryLists extends _$LibraryLists {
 }
 
 @Riverpod(keepAlive: true)
-LibraryListQuery libraryListQuery(LibraryListQueryRef ref, int index) {
+LibraryListQuery libraryListQuery(Ref ref, int index) {
   return ref.watch(libraryListsProvider.select((value) => value[index]));
 }
 
+@RoutePage()
 class LibraryTabsPage extends HookConsumerWidget {
   const LibraryTabsPage({super.key});
 

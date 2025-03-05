@@ -14,7 +14,7 @@ part 'images.g.dart';
 
 @riverpod
 CacheInfo _artistArtCacheInfo(
-  _ArtistArtCacheInfoRef ref, {
+  Ref ref, {
   required String artistId,
   bool thumbnail = true,
 }) {
@@ -24,7 +24,7 @@ CacheInfo _artistArtCacheInfo(
 
 @riverpod
 FutureOr<String?> _artistArtCachedUrl(
-  _ArtistArtCachedUrlRef ref, {
+  Ref ref, {
   required String artistId,
   bool thumbnail = true,
 }) async {
@@ -40,7 +40,7 @@ FutureOr<String?> _artistArtCachedUrl(
 
 @riverpod
 FutureOr<UriCacheInfo> _artistArtUriCacheInfo(
-  _ArtistArtUriCacheInfoRef ref, {
+  Ref ref, {
   required String artistId,
   bool thumbnail = true,
 }) async {

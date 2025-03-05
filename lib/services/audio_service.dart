@@ -45,7 +45,7 @@ class QueueSlice {
 }
 
 @Riverpod(keepAlive: true)
-FutureOr<AudioControl> audioControlInit(AudioControlInitRef ref) async {
+FutureOr<AudioControl> audioControlInit(Ref ref) async {
   final imageCache = ref.watch(imageCacheProvider);
 
   return AudioService.init(
@@ -62,7 +62,7 @@ FutureOr<AudioControl> audioControlInit(AudioControlInitRef ref) async {
 }
 
 @Riverpod(keepAlive: true)
-AudioControl audioControl(AudioControlRef ref) {
+AudioControl audioControl(Ref ref) {
   return ref.watch(audioControlInitProvider).requireValue;
 }
 

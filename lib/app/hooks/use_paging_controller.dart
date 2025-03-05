@@ -22,16 +22,6 @@ PagingController<PageKeyType, ItemType>
     ),
   );
 
-  useEffect(
-    () {
-      FutureOr<void>? listener(PageKeyType pageKey) =>
-          onPageRequest?.call(pageKey, controller);
-      controller.addPageRequestListener(listener);
-      return () => controller.removePageRequestListener(listener);
-    },
-    [onPageRequest],
-  );
-
   return controller;
 }
 

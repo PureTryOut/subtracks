@@ -1,4 +1,5 @@
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../cache/image_cache.dart';
@@ -44,7 +45,7 @@ String artistArtCacheKey(
 }
 
 @Riverpod(keepAlive: true)
-CacheService cacheService(CacheServiceRef ref) {
+CacheService cacheService(Ref ref) {
   final imageCache = ref.watch(imageCacheProvider);
   final source = ref.watch(musicSourceProvider);
   final placeholderImageUri =

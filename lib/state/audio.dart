@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../database/database.dart';
@@ -12,7 +13,7 @@ import 'settings.dart';
 part 'audio.g.dart';
 
 @Riverpod(keepAlive: true)
-Stream<MediaItem?> mediaItem(MediaItemRef ref) async* {
+Stream<MediaItem?> mediaItem(Ref ref) async* {
   final audio = ref.watch(audioControlProvider);
   await for (var item in audio.mediaItem) {
     yield item;
@@ -20,7 +21,7 @@ Stream<MediaItem?> mediaItem(MediaItemRef ref) async* {
 }
 
 @Riverpod(keepAlive: true)
-MediaItemData? mediaItemData(MediaItemDataRef ref) {
+MediaItemData? mediaItemData(Ref ref) {
   return ref.watch(
     mediaItemProvider.select(
       (value) => value.valueOrNull?.data,
@@ -29,7 +30,7 @@ MediaItemData? mediaItemData(MediaItemDataRef ref) {
 }
 
 @Riverpod(keepAlive: true)
-Stream<Song?> mediaItemSong(MediaItemSongRef ref) {
+Stream<Song?> mediaItemSong(Ref ref) {
   final db = ref.watch(databaseProvider);
   final sourceId = ref.watch(sourceIdProvider);
   final id = ref.watch(
@@ -42,7 +43,7 @@ Stream<Song?> mediaItemSong(MediaItemSongRef ref) {
 }
 
 @Riverpod(keepAlive: true)
-Stream<PlaybackState> playbackState(PlaybackStateRef ref) async* {
+Stream<PlaybackState> playbackState(Ref ref) async* {
   final audio = ref.watch(audioControlProvider);
   await for (var state in audio.playbackState) {
     yield state;
@@ -50,7 +51,7 @@ Stream<PlaybackState> playbackState(PlaybackStateRef ref) async* {
 }
 
 @Riverpod(keepAlive: true)
-Stream<QueueMode> queueMode(QueueModeRef ref) async* {
+Stream<QueueMode> queueMode(Ref ref) async* {
   final audio = ref.watch(audioControlProvider);
   await for (var state in audio.queueMode) {
     yield state;
@@ -58,7 +59,7 @@ Stream<QueueMode> queueMode(QueueModeRef ref) async* {
 }
 
 @Riverpod(keepAlive: true)
-Stream<List<MediaItem>> queue(QueueRef ref) async* {
+Stream<List<MediaItem>> queue(Ref ref) async* {
   final audio = ref.watch(audioControlProvider);
   await for (var queue in audio.queue) {
     yield queue;
@@ -66,7 +67,7 @@ Stream<List<MediaItem>> queue(QueueRef ref) async* {
 }
 
 @Riverpod(keepAlive: true)
-Stream<List<int>?> shuffleIndicies(ShuffleIndiciesRef ref) async* {
+Stream<List<int>?> shuffleIndicies(Ref ref) async* {
   final audio = ref.watch(audioControlProvider);
   await for (var indicies in audio.shuffleIndicies) {
     yield indicies;
@@ -74,7 +75,7 @@ Stream<List<int>?> shuffleIndicies(ShuffleIndiciesRef ref) async* {
 }
 
 @riverpod
-Stream<Duration> positionStream(PositionStreamRef ref) async* {
+Stream<Duration> positionStream(Ref ref) async* {
   final audio = ref.watch(audioControlProvider);
   await for (var state in audio.position) {
     yield state;
@@ -82,7 +83,7 @@ Stream<Duration> positionStream(PositionStreamRef ref) async* {
 }
 
 @riverpod
-bool playing(PlayingRef ref) {
+bool playing(Ref ref) {
   return ref.watch(
     playbackStateProvider.select(
       (value) => value.valueOrNull?.playing ?? false,
@@ -91,7 +92,7 @@ bool playing(PlayingRef ref) {
 }
 
 @riverpod
-AudioProcessingState? processingState(ProcessingStateRef ref) {
+AudioProcessingState? processingState(Ref ref) {
   return ref.watch(
     playbackStateProvider.select(
       (value) => value.valueOrNull?.processingState,
@@ -100,7 +101,7 @@ AudioProcessingState? processingState(ProcessingStateRef ref) {
 }
 
 @riverpod
-int position(PositionRef ref) {
+int position(Ref ref) {
   return ref.watch(
     positionStreamProvider.select(
       (value) => value.valueOrNull?.inSeconds ?? 0,
@@ -109,7 +110,7 @@ int position(PositionRef ref) {
 }
 
 @riverpod
-int duration(DurationRef ref) {
+int duration(Ref ref) {
   return ref.watch(
     mediaItemProvider.select(
       (value) => value.valueOrNull?.duration?.inSeconds ?? 0,
@@ -118,7 +119,7 @@ int duration(DurationRef ref) {
 }
 
 @Riverpod(keepAlive: true)
-AudioServiceShuffleMode? shuffleMode(ShuffleModeRef ref) {
+AudioServiceShuffleMode? shuffleMode(Ref ref) {
   return ref.watch(
     playbackStateProvider.select(
       (value) => value.valueOrNull?.shuffleMode,
@@ -127,7 +128,7 @@ AudioServiceShuffleMode? shuffleMode(ShuffleModeRef ref) {
 }
 
 @Riverpod(keepAlive: true)
-AudioServiceRepeatMode repeatMode(RepeatModeRef ref) {
+AudioServiceRepeatMode repeatMode(Ref ref) {
   return ref.watch(
     playbackStateProvider.select(
       (value) => value.valueOrNull?.repeatMode ?? AudioServiceRepeatMode.none,

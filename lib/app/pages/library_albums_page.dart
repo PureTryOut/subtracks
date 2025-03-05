@@ -9,6 +9,7 @@ import '../hooks/use_list_query_paging_controller.dart';
 import '../items.dart';
 import '../lists.dart';
 
+@RoutePage()
 class LibraryAlbumsPage extends HookConsumerWidget {
   const LibraryAlbumsPage({super.key});
 

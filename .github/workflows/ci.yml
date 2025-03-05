@@ -23,7 +23,8 @@ jobs:
 
       - run: flutter pub get
       - run: flutter gen-l10n
-      - run: dart run build_runner build
       - run: cp .env.example .env
       - run: dart format -o none --set-exit-if-changed .
+      # Make sure to run the build_runner after the formatter to prevent it from failing on generated code
+      - run: dart run build_runner build
       - run: flutter analyze

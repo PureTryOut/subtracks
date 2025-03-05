@@ -1,3 +1,4 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -27,6 +28,6 @@ class SubtracksHttpClient extends BaseClient {
 }
 
 @Riverpod(keepAlive: true)
-BaseClient httpClient(HttpClientRef ref) {
+BaseClient httpClient(Ref ref) {
   return SubtracksHttpClient();
 }

@@ -33,7 +33,7 @@ class SearchQuery extends _$SearchQuery {
 }
 
 @riverpod
-FutureOr<SearchResults> searchResult(SearchResultRef ref) async {
+FutureOr<SearchResults> searchResult(Ref ref) async {
   final query = ref.watch(searchQueryProvider);
   final db = ref.watch(databaseProvider);
   final sourceId = ref.watch(sourceIdProvider);
@@ -54,6 +54,7 @@ FutureOr<SearchResults> searchResult(SearchResultRef ref) async {
   );
 }
 
+@RoutePage()
 class SearchPage extends HookConsumerWidget {
   const SearchPage({super.key});
 
