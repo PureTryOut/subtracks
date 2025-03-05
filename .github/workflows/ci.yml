@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+          cache-key: "${{ runner.OS }}-flutter-install-cache"
+          flutter-version: "3.29.0"
+
+      - run: flutter pub get
+      - run: flutter gen-l10n
+      - run: cp .env.example .env
+      - run: dart format -o none --set-exit-if-changed .
+      - run: flutter analyze
